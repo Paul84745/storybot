@@ -1,0 +1,121 @@
+"""Ask Gemini for a new 3-part fictional story and save it as story JSON.
+
+Usage: python write_story.py stories/<name>.json
+Needs GEMINI_API_KEY or GROQ_API_KEY. Keeps a history of past titles in state/history.json
+so stories don't repeat.
+"""
+import json, os, random, re, sys, urllib.request
+from datetime import date
+
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
+HIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state", "history.json")
+
+GENRES = [
+    "family betrayal and a satisfying, legal revenge",
+    "workplace drama where a smug boss or coworker gets exposed",
+    "entitled neighbor conflict with a clever, petty-but-legal payback",
+    "wedding or relationship drama with a twist reveal",
+    "inheritance or money dispute where the quiet person wins",
+    "roommate or landlord drama with an unexpected turn",
+]
+VOICES = ["af_heart", "af_bella", "af_nicole", "am_michael", "am_adam", "bf_emma"]
+
+PROMPT = """Write an original, fictional first-person story for a 3-part TikTok narration series.
+Genre: {genre}.
+Rules:
+- Exactly 3 parts. Each part 210 to 240 words of plain spoken prose (no headings, no emojis, no lists).
+- Part 1 opens with a one-sentence hook that creates instant curiosity.
+- Parts 1 and 2 end on a cliffhanger. Part 3 resolves it with a satisfying payoff.
+- Revenge must stay legal and non-violent. No real people, brands or places. No sexual content, slurs or gore.
+- Simple words, short sentences, written to be read aloud. Spell out numbers.
+- Do not write "follow for part 2"; that is added automatically.
+- Avoid these previously used titles/premises: {avoid}
+Also write:
+- a title (max 9 words, the hook, no quotes)
+- a TikTok caption (max 140 chars, ends with 3-5 relevant hashtags including #storytime)
+- narrator: "female" or "male", matching the first-person narrator
+- scenes: for EACH part, 6 image prompts that illustrate that part in order (one visual moment each,
+  max 25 words, describe people by appearance only, keep each character's look identical in every prompt,
+  no names, no text or signs in the image, nothing graphic)
+Return ONLY JSON: {{"title": "...", "caption": "...", "narrator": "female", "parts": ["...", "...", "..."], "scenes": [["..."], ["..."], ["..."]]}}"""
+
+
+def gemini(prompt):
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent"
+    body = {"contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"temperature": 1.0, "responseMimeType": "application/json"}}
+    req = urllib.request.Request(url, json.dumps(body).encode(), {
+        "Content-Type": "application/json", "x-goog-api-key": os.environ["GEMINI_API_KEY"]})
+    with urllib.request.urlopen(req, timeout=120) as r:
+        data = json.load(r)
+    return data["candidates"][0]["content"]["parts"][0]["text"]
+
+
+GROQ_MODELS = [m for m in [os.environ.get("GROQ_MODEL")] if m] + [
+    "openai/gpt-oss-120b", "llama-3.3-70b-versatile", "moonshotai/kimi-k2-instruct"]
+
+
+def groq(prompt):
+    last = None
+    for model in GROQ_MODELS:
+        body = {"model": model, "temperature": 1.0, "response_format": {"type": "json_object"},
+                "messages": [{"role": "user", "content": prompt}]}
+        req = urllib.request.Request("https://api.groq.com/openai/v1/chat/completions", json.dumps(body).encode(), {
+            "Content-Type": "application/json", "Authorization": "Bearer " + os.environ["GROQ_API_KEY"],
+            "User-Agent": "storybot"})
+        try:
+            with urllib.request.urlopen(req, timeout=120) as r:
+                return json.load(r)["choices"][0]["message"]["content"]
+        except Exception as e:
+            last = e
+            print(f"groq {model} failed: {e}")
+    raise last
+
+
+def write(prompt):
+    """Use Gemini if a key is set, otherwise (or if it fails) Groq."""
+    if os.environ.get("GEMINI_API_KEY"):
+        try:
+            return gemini(prompt)
+        except Exception as e:
+            print(f"gemini failed: {e}")
+            if not os.environ.get("GROQ_API_KEY"):
+                raise
+    return groq(prompt)
+
+
+def valid(s):
+    return (isinstance(s, dict) and s.get("title") and len(s.get("parts", [])) == 3
+            and all(170 <= len(p.split()) <= 300 for p in s["parts"]))
+
+
+def main(out):
+    hist = json.load(open(HIST)) if os.path.exists(HIST) else []
+    avoid = "; ".join(h["title"] for h in hist[-40:]) or "none"
+    for attempt in range(4):
+        raw = write(PROMPT.format(genre=random.choice(GENRES), avoid=avoid))
+        raw = re.sub(r"^```(json)?|```$", "", raw.strip())
+        try:
+            story = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if valid(story):
+            break
+    else:
+        sys.exit("Gemini did not return a usable story")
+    story["voice"] = random.choice(VOICES)
+    if story.get("narrator") not in ("female", "male"):
+        story["narrator"] = "female"
+    sc = story.get("scenes")
+    if not (isinstance(sc, list) and len(sc) == 3 and all(isinstance(x, list) and x for x in sc)):
+        story.pop("scenes", None)
+    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+    json.dump(story, open(out, "w"), indent=2)
+    hist.append({"date": date.today().isoformat(), "title": story["title"]})
+    os.makedirs(os.path.dirname(HIST), exist_ok=True)
+    json.dump(hist, open(HIST, "w"), indent=2)
+    print(story["title"])
+
+
+if __name__ == "__main__":
+    main(sys.argv[1])

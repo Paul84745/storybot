@@ -1,0 +1,99 @@
+name: storybot
+
+on:
+  schedule:
+    - cron: "17 5 * * *"   # once a day, ~06:17 Paris time in winter
+  workflow_dispatch:
+    inputs:
+      story_file:
+        description: "Render an existing story JSON instead of writing a new one (optional)"
+        type: string
+        default: ""
+
+concurrency:
+  group: storybot
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  make:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Install ffmpeg + fonts
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-poppins || sudo apt-get install -y -qq ffmpeg
+
+      - name: Fallback font
+        run: |
+          fc-list | grep -qi poppins || (mkdir -p ~/.fonts && curl -sSL -o ~/.fonts/Poppins-Bold.ttf https://github.com/google/fonts/raw/main/ofl/poppins/Poppins-Bold.ttf && fc-cache -f)
+
+      - name: Voice model (cached)
+        uses: actions/cache@v4
+        with:
+          path: models
+          key: kokoro-v1.0
+
+      - name: Download voice model if missing
+        run: |
+          mkdir -p models
+          [ -f models/kokoro.onnx ] || curl -sSL -o models/kokoro.onnx https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx
+          [ -f models/voices.bin ] || curl -sSL -o models/voices.bin https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin
+
+      - name: Write story
+        id: story
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          if [ -n "${{ inputs.story_file }}" ]; then F="${{ inputs.story_file }}"; else
+            F="stories/$(date -u +%Y-%m-%d).json"; python write_story.py "$F"; fi
+          echo "file=$F" >> "$GITHUB_OUTPUT"
+
+      - name: Get gameplay clips (upload yours to a release tagged "backgrounds")
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download backgrounds -p "*.mp4" -D backgrounds || echo "no gameplay clips yet - using AI scenes"
+
+      - name: Render videos
+        env:
+          BG_MODE: ${{ vars.BG_MODE || 'auto' }}
+        run: python make_video.py "${{ steps.story.outputs.file }}" out
+
+      - name: Write caption file
+        run: |
+          python - <<'PY'
+          import json
+          s = json.load(open("${{ steps.story.outputs.file }}"))
+          cap = s.get("caption", s["title"] + " #storytime")
+          bgs = json.load(open("out/meta.json"))["backgrounds"]
+          epic = ("\nPortions of the materials used are trademarks and/or copyrighted works of Epic Games, Inc. "
+                  "All rights reserved by Epic. This material is not official and is not endorsed by Epic.")
+          with open("out/captions.txt", "w") as f:
+              for i in range(1, len(s["parts"]) + 1):
+                  extra = epic if "fortnite" in bgs[i - 1].lower() else ""
+                  f.write(f"PART {i}: {s['title']} (part {i}) {cap}{extra}\n\n")
+          PY
+
+      - name: Save story history
+        run: |
+          git config user.name storybot && git config user.email storybot@users.noreply.github.com
+          git add stories state && git commit -qm "story $(date -u +%F)" && git push || true
+
+      - name: Publish videos as a release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="story-$(date -u +%Y%m%d-%H%M)"
+          TITLE=$(python -c "import json;print(json.load(open('${{ steps.story.outputs.file }}'))['title'])")
+          gh release create "$TAG" out/part*.mp4 out/captions.txt --title "$TITLE" --notes-file out/captions.txt
