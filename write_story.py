@@ -72,7 +72,7 @@ Improve this 3-part story so viewers watch every second and follow for the next 
 - Cut any backstory, filler or explaining feelings; replace with escalation, dialogue and reveals.
 - Make sure the end of Parts 1 and 2 cuts right before a revelation and makes the viewer NEED the next part.
 - Make the Part 3 payoff more satisfying, and end it with a verdict question to the viewer.
-- Keep the same plot, narrator, title idea and JSON fields (title, type, narrator, captions, parts). Each part must stay 220 to 250 words — count them.
+- Keep the same plot, narrator, title idea and JSON fields (title, type, narrator, captions, parts). Each part must stay 220 to 250 words — count them. NEVER shorten a part: replace weak sentences with stronger ones of similar length.
 
 Story JSON:
 {story}
