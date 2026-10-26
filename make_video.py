@@ -274,7 +274,8 @@ def background_input(mode, prompts, total, base, idx):
 # ---------------------------------------------------------------- main
 def render_part(story, idx, out_dir):
     n = len(story["parts"])
-    text = story["parts"][idx - 1].rstrip()
+    text = re.sub(r"[*_#~`]+", "", story["parts"][idx - 1]).replace("1‑5‑3", "one fifty-three").strip()
+    text = re.sub(r"\s+", " ", text)
     text += f" Follow for part {idx + 1}." if idx < n else " Follow for more stories."
     if idx > 1:
         text = f"Part {idx}. " + text
