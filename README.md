@@ -21,7 +21,7 @@ Every day it:
 - Repo variable `BG_MODE` = `gameplay` (default), `scenes` (AI illustrations) or `gradient`.
 
 ## Voice
-Microsoft neural voices (Ava, Emma, Andrew, Brian…) at a brisk +15% pace (repo variable `VOICE_RATE`),
+Ava (female narrators) and Andrew (male narrators), Microsoft neural voices, at a brisk +10% pace (repo variable `VOICE_RATE`),
 with exact word timing for the pop-in captions;
 an offline voice is used automatically if that service is down.
 

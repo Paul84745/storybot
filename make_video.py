@@ -24,9 +24,9 @@ import soundfile as sf
 HERE = os.path.dirname(os.path.abspath(__file__))
 W, H, FPS = 1080, 1920, 30
 MIN_SECONDS = float(os.environ.get("MIN_SECONDS", 62))
-EDGE_VOICES = {
-    "female": ["en-US-AvaMultilingualNeural", "en-US-EmmaMultilingualNeural", "en-US-JennyNeural"],
-    "male": ["en-US-AndrewMultilingualNeural", "en-US-BrianMultilingualNeural", "en-US-ChristopherNeural"],
+EDGE_VOICES = {   # picked by Paul from the voice sampler (#3 Ava, #1 Andrew)
+    "female": ["en-US-AvaMultilingualNeural"],
+    "male": ["en-US-AndrewMultilingualNeural"],
 }
 PALETTES = [
     ("0x1a0b2e", "0x6a1b9a", "0xff4081", "0x0d47a1"),
@@ -119,7 +119,7 @@ def narrate(text, story, base):
     gender = story.get("narrator", "female")
     voice = os.environ.get("VOICE") or story.get("edge_voice") or random.Random(story.get("title")).choice(EDGE_VOICES[gender])
     try:
-        rate = int(os.environ.get("VOICE_RATE", 15))  # brisk, energetic delivery
+        rate = int(os.environ.get("VOICE_RATE", 10))  # brisk, energetic delivery
         for _ in range(3):
             audio, words = edge_narrate(text, voice, f"{rate:+d}%", base)
             dur = probe_duration(audio)
