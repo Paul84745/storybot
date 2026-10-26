@@ -17,7 +17,7 @@ Background, in order of preference (override with BG_MODE=gameplay|scenes|gradie
   2. scenes    – AI illustrations of the story with slow zoom/pan
   3. gradient  – animated colour gradient
 """
-import asyncio, glob, json, os, random, re, subprocess, sys, urllib.parse, urllib.request
+import asyncio, glob, time, json, os, random, re, subprocess, sys, urllib.parse, urllib.request
 import numpy as np
 import soundfile as sf
 
@@ -126,9 +126,9 @@ def narrate(text, story, base):
             if dur >= MIN_SECONDS or rate <= -12:
                 break
             rate = max(-12, int(rate - (MIN_SECONDS + 1.5 - dur) / dur * 100) - 1)
-        print(f"  voice: {voice} ({rate:+d}%)")
+        print(f"::notice::voice {voice} ({rate:+d}%), {dur:.0f}s")
     except Exception as e:
-        print(f"  edge-tts unavailable ({e}); using offline voice")
+        print(f"::warning::natural voice unavailable ({e}); using offline voice")
         speed = 1.0
         audio, words = kokoro_narrate(text, story.get("voice", "af_heart"), speed, base)
         dur = probe_duration(audio)
@@ -190,18 +190,21 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 # ---------------------------------------------------------------- backgrounds
 def fetch_image(prompt, seed, path):
     style = ", cinematic photo, dramatic lighting, vertical composition, highly detailed, no text"
-    url = ("https://image.pollinations.ai/prompt/" + urllib.parse.quote(prompt + style) +
+    url = ("https://image.pollinations.ai/prompt/" + urllib.parse.quote(prompt[:300] + style) +
            f"?width={W}&height={H}&nologo=true&seed={seed}&model=flux")
-    for _ in range(3):
+    for attempt in range(4):
+        time.sleep(4 if attempt == 0 else 15 * attempt)  # free tier allows one request at a time
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "storybot"})
-            with urllib.request.urlopen(req, timeout=180) as r:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 storybot"})
+            with urllib.request.urlopen(req, timeout=240) as r:
                 data = r.read()
-            if len(data) > 20000:
+            if len(data) > 20000 and (data[:2] == b"\xff\xd8" or data[:4] == b"\x89PNG"):
                 open(path, "wb").write(data)
                 return True
+            print(f"::warning::image: unexpected reply ({len(data)} bytes)")
         except Exception as e:
-            print(f"  image retry ({e})")
+            body = e.read().decode(errors="ignore")[:150] if hasattr(e, "read") else ""
+            print(f"::warning::image attempt {attempt + 1} failed: {e} {body}")
     return False
 
 
@@ -211,6 +214,7 @@ def scenes_background(prompts, total, base):
         path = f"{base}_s{i}.jpg"
         if fetch_image(p, random.randint(1, 10**6), path):
             imgs.append(path)
+    print(f"::notice::{len(imgs)}/{len(prompts)} scene images generated")
     if len(imgs) < 2:
         return None
     seg = total / len(imgs)
@@ -264,7 +268,7 @@ def render_part(story, idx, out_dir):
     run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *bg_in, "-i", audio,
          "-filter_complex", f"[0:v]{bg_vf},ass={base}.ass[v];[1:a]apad,loudnorm=I=-14:TP=-1.5[a]",
          "-map", "[v]", "-map", "[a]", "-t", f"{total:.2f}", "-r", str(FPS),
-         "-c:v", "libx264", "-preset", "veryfast", "-crf", "21", "-pix_fmt", "yuv420p",
+         "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-maxrate", "5M", "-bufsize", "10M", "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", base + ".mp4"])
     for f in (audio, base + ".mp3", base + ".ass", base + "_bg.mp4"):
         if os.path.exists(f):
