@@ -1,0 +1,25 @@
+name: probe
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: pip install -q edge-tts
+      - name: Check services
+        run: |
+          code=$(curl -s -o img.jpg -w '%{http_code}' -m 120 "https://image.pollinations.ai/prompt/a%20quiet%20street?width=1080&height=1920&nologo=true&model=flux")
+          echo "::notice::pollinations http=$code bytes=$(stat -c%s img.jpg) type=$(file -b img.jpg | cut -c1-60) body=$(head -c 200 img.jpg | tr -d '\n\r' | tr -cd '[:print:]')"
+          python - <<'PY'
+          import asyncio, edge_tts
+          async def go():
+              c = edge_tts.Communicate("Testing the narrator voice.", "en-US-AvaMultilingualNeural", boundary="WordBoundary")
+              n = w = 0
+              async for ch in c.stream():
+                  if ch["type"] == "audio": n += len(ch["data"])
+                  elif ch["type"] == "WordBoundary": w += 1
+              print(f"::notice::edge-tts audio_bytes={n} words={w}")
+          try:
+              asyncio.run(go())
+          except Exception as e:
+              print(f"::notice::edge-tts failed: {e!r}"[:300])
+          PY
