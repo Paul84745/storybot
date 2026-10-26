@@ -89,20 +89,20 @@ jobs:
           python - <<'PY'
           import json
           s = json.load(open("${{ steps.story.outputs.file }}"))
-          cap = s.get("caption", s["title"] + " #storytime")
+          caps = s.get("captions") or [s.get("caption", s["title"] + " #storytime #fyp")] * len(s["parts"])
           bgs = json.load(open("out/meta.json"))["backgrounds"]
           epic = ("\nPortions of the materials used are trademarks and/or copyrighted works of Epic Games, Inc. "
                   "All rights reserved by Epic. This material is not official and is not endorsed by Epic.")
           with open("out/captions.txt", "w") as f:
               for i in range(1, len(s["parts"]) + 1):
                   extra = epic if "fortnite" in bgs[i - 1].lower() else ""
-                  f.write(f"PART {i}: {s['title']} (part {i}) {cap}{extra}\n\n")
+                  f.write(f"PART {i}:\n{caps[i - 1]}{extra}\n\n")
           PY
 
       - name: Save story history
         run: |
           git config user.name storybot && git config user.email storybot@users.noreply.github.com
-          git add stories state && git commit -qm "story $(date -u +%F)" && git push || true
+          git add stories state playbook.md && git commit -qm "story $(date -u +%F)" && git push || true
 
       - name: Publish videos as a release
         env:
