@@ -23,11 +23,13 @@ VOICES = ["af_heart", "af_bella", "af_nicole", "am_michael", "am_adam", "bf_emma
 PROMPT = """Write an original, fictional first-person story for a 3-part TikTok narration series.
 Genre: {genre}.
 Rules:
-- Exactly 3 parts. Each part 190 to 220 words of plain spoken prose (no headings, no emojis, no lists).
+- Exactly 3 parts. Each part 240 to 270 words of plain spoken prose (no headings, no emojis, no lists).
 - Part 1 opens with a one-sentence hook that creates instant curiosity.
 - Parts 1 and 2 end on a cliffhanger. Part 3 resolves it with a satisfying payoff.
 - Revenge must stay legal and non-violent. No real people, brands or places. No sexual content, slurs or gore.
-- Simple words, short sentences, written to be read aloud. Spell out numbers.
+- Simple words, short punchy sentences, written to be read aloud with energy. Spell out numbers.
+- Keep tension high the whole time: a new reveal, twist or escalation every few sentences; no slow backstory.
+- Use direct dialogue lines and vivid reactions. Part 2 and 3 open by instantly reminding the viewer what is at stake.
 - Do not write "follow for part 2"; that is added automatically.
 - Avoid these previously used titles/premises: {avoid}
 Also write:
@@ -109,7 +111,7 @@ def write(prompt):
 
 def valid(s):
     return (isinstance(s, dict) and s.get("title") and len(s.get("parts", [])) == 3
-            and all(160 <= len(p.split()) <= 260 for p in s["parts"]))
+            and all(200 <= len(p.split()) <= 310 for p in s["parts"]))
 
 
 def main(out):

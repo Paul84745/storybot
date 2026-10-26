@@ -14,15 +14,15 @@ Every day it:
 - Actions → storybot → Run workflow to test
 
 ## Backgrounds
-- **Gameplay (preferred):** record your own gameplay (e.g. Fortnite parkour), then on GitHub
-  go to Releases → new release with tag `backgrounds` and attach the `.mp4` files.
-  Every video picks a random clip and a random start point. If a filename contains
-  "fortnite", Epic's required disclaimer is added to the caption automatically.
-- **AI scenes (default until clips exist):** 6 AI illustrations per part with slow zoom.
-- Force one mode with a repo variable `BG_MODE` = `gameplay`, `scenes` or `gradient`.
+- **Generated 3D parkour gameplay (default):** a character runs and jumps across floating block
+  platforms, collecting gems, with a fresh course and colour theme every video. Fully original footage.
+- **Your own gameplay:** upload `.mp4` clips to a release tagged `backgrounds` and they're used instead
+  (random clip, random start). Filenames containing "fortnite" get Epic's disclaimer in the caption.
+- Repo variable `BG_MODE` = `gameplay` (default), `scenes` (AI illustrations) or `gradient`.
 
 ## Voice
-Microsoft neural voices (Ava, Emma, Andrew, Brian…) with exact word timing for captions;
+Microsoft neural voices (Ava, Emma, Andrew, Brian…) at a brisk +15% pace (repo variable `VOICE_RATE`),
+with exact word timing for the pop-in captions;
 an offline voice is used automatically if that service is down.
 
 ## Posting

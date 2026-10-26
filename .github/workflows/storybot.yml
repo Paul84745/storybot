@@ -32,7 +32,7 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: Install ffmpeg + fonts
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-poppins || sudo apt-get install -y -qq ffmpeg
+        run: sudo apt-get update -qq && (sudo apt-get install -y -qq ffmpeg libegl1 libgl1-mesa-dri fonts-poppins || sudo apt-get install -y -qq ffmpeg libegl1 libgl1-mesa-dri)
 
       - name: Fallback font
         run: |
@@ -68,6 +68,7 @@ jobs:
       - name: Render videos
         env:
           BG_MODE: ${{ vars.BG_MODE || 'auto' }}
+          VOICE_RATE: ${{ vars.VOICE_RATE || '15' }}
         run: python make_video.py "${{ steps.story.outputs.file }}" out
 
       - name: Write caption file

@@ -119,13 +119,13 @@ def narrate(text, story, base):
     gender = story.get("narrator", "female")
     voice = story.get("edge_voice") or random.Random(story.get("title")).choice(EDGE_VOICES[gender])
     try:
-        rate = 5
+        rate = int(os.environ.get("VOICE_RATE", 15))  # brisk, energetic delivery
         for _ in range(3):
             audio, words = edge_narrate(text, voice, f"{rate:+d}%", base)
             dur = probe_duration(audio)
-            if dur >= MIN_SECONDS or rate <= -12:
+            if dur >= MIN_SECONDS or rate <= 0:
                 break
-            rate = max(-12, int(rate - (MIN_SECONDS + 1.5 - dur) / dur * 100) - 1)
+            rate = max(0, int(rate - (MIN_SECONDS + 1.5 - dur) / dur * 100) - 1)
         print(f"::notice::voice {voice} ({rate:+d}%), {dur:.0f}s")
     except Exception as e:
         print(f"::warning::natural voice unavailable ({e}); using offline voice")
@@ -157,7 +157,7 @@ WrapStyle: 0
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Cap,Poppins,100,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,8,3,5,80,80,0,1
+Style: Cap,Poppins,112,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,8,3,5,80,80,0,1
 Style: Badge,Poppins,54,&H00FFFFFF,&H00FFFFFF,&H00000000,&H96000000,1,0,0,0,100,100,0,0,3,14,0,8,0,0,170,1
 Style: Label,Poppins,36,&H00E6E6E6,&H00FFFFFF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,3,0,8,0,0,265,1
 Style: Title,Poppins,70,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,7,2,8,90,90,360,1
@@ -173,16 +173,18 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     for k, w in enumerate(words):
         cur.append(w)
         nxt = words[k + 1] if k + 1 < len(words) else None
-        if len(cur) == 3 or re.search(r"[.,!?;:…]$", w[0]) or (nxt and nxt[1] - w[2] > 0.25):
+        if len(cur) == 2 or re.search(r"[.,!?;:…]$", w[0]) or (nxt and nxt[1] - w[2] > 0.25):
             groups.append(cur); cur = []
     if cur: groups.append(cur)
     for gi, g in enumerate(groups):
         nxt_start = groups[gi + 1][0][1] if gi + 1 < len(groups) else g[-1][2] + 0.4
         for i, (w, s, e) in enumerate(g):
             end = g[i + 1][1] if i + 1 < len(g) else min(nxt_start, e + 0.35)
-            txt = " ".join(("{\\c&H00E5FF&\\fscx108\\fscy108}" + esc(x) + "{\\r}") if j == i else esc(x)
+            hl = "{\\c&H00E5FF&}" if gi % 3 else "{\\c&H66FF33&}"   # alternate highlight colours
+            txt = " ".join((hl + esc(x) + "{\\c&HFFFFFF&}") if j == i else esc(x)
                            for j, (x, _, _) in enumerate(g))
-            ev.append(f"Dialogue: 0,{ass_time(s)},{ass_time(max(end, s + 0.05))},Cap,,0,0,0,,{{\\pos({W//2},{H//2})}}{txt}")
+            pop = "\\fscx72\\fscy72\\t(0,90,\\fscx106\\fscy106)\\t(90,150,\\fscx100\\fscy100)" if i == 0 else ""
+            ev.append(f"Dialogue: 0,{ass_time(s)},{ass_time(max(end, s + 0.05))},Cap,,0,0,0,,{{\\pos({W//2},{H//2 - 230}){pop}}}{txt}")
     with open(path, "w") as f:
         f.write(head + "\n".join(ev) + "\n")
 
@@ -237,13 +239,22 @@ def scenes_background(prompts, total, base):
 
 
 def background_input(mode, prompts, total, base, idx):
+    """gameplay (default): your own clips if uploaded, else generated 3D parkour run."""
     clips = sorted(glob.glob(os.path.join(HERE, "backgrounds", "*.mp4")))
-    if mode in ("auto", "gameplay") and clips:
-        clip = random.choice(clips)
-        start = random.uniform(0, max(0, probe_duration(clip) - total - 1))
-        return (["-ss", f"{start:.1f}", "-stream_loop", "-1", "-i", clip],
-                f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},eq=brightness=-0.06", clip)
-    if mode in ("auto", "scenes") and prompts:
+    if mode in ("auto", "gameplay"):
+        if clips:
+            clip = random.choice(clips)
+            start = random.uniform(0, max(0, probe_duration(clip) - total - 1))
+            return (["-ss", f"{start:.1f}", "-stream_loop", "-1", "-i", clip],
+                    f"scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},eq=brightness=-0.06", clip)
+        try:
+            import gameplay
+            bg = gameplay.render(base + "_bg.mp4", total + 0.5)
+            print("::notice::generated 3D parkour gameplay background")
+            return ["-i", bg], "eq=saturation=1.08", bg
+        except Exception as e:
+            print(f"::warning::gameplay renderer failed ({e!r}); falling back")
+    if mode in ("auto", "gameplay", "scenes") and prompts:
         bg = scenes_background(prompts, total, base)
         if bg:
             return ["-i", bg], "eq=brightness=-0.03:saturation=1.1", bg
