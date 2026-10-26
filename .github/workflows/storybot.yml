@@ -70,7 +70,7 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           if [ -n "${{ inputs.story_file }}" ]; then F="${{ inputs.story_file }}"; else
-            F="stories/$(date -u +%Y-%m-%d).json"; python write_story.py "$F"; fi
+            F="stories/$(date -u +%Y-%m-%d-%H%M).json"; python write_story.py "$F"; fi
           echo "file=$F" >> "$GITHUB_OUTPUT"
 
       - name: Get gameplay clips (upload yours to a release tagged "backgrounds")
