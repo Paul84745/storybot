@@ -68,7 +68,8 @@ def groq(prompt):
                 return json.load(r)["choices"][0]["message"]["content"]
         except Exception as e:
             last = e
-            print(f"groq {model} failed: {e}")
+            detail = e.read().decode()[:300] if hasattr(e, "read") else ""
+            print(f"::warning::groq {model} failed: {e} {detail}")
     raise last
 
 
@@ -78,7 +79,7 @@ def write(prompt):
         try:
             return gemini(prompt)
         except Exception as e:
-            print(f"gemini failed: {e}")
+            print(f"::warning::gemini failed: {e}")
             if not os.environ.get("GROQ_API_KEY"):
                 raise
     return groq(prompt)
@@ -90,6 +91,8 @@ def valid(s):
 
 
 def main(out):
+    if not (os.environ.get("GEMINI_API_KEY") or os.environ.get("GROQ_API_KEY")):
+        sys.exit("::error::No GROQ_API_KEY or GEMINI_API_KEY secret found in the repo")
     hist = json.load(open(HIST)) if os.path.exists(HIST) else []
     avoid = "; ".join(h["title"] for h in hist[-40:]) or "none"
     for attempt in range(4):
@@ -98,11 +101,14 @@ def main(out):
         try:
             story = json.loads(raw)
         except json.JSONDecodeError:
+            print(f"::warning::attempt {attempt + 1}: reply was not JSON: {raw[:150]!r}")
             continue
         if valid(story):
             break
+        lens = [len(p.split()) for p in story.get("parts", [])] if isinstance(story, dict) else []
+        print(f"::warning::attempt {attempt + 1}: story rejected (part word counts {lens})")
     else:
-        sys.exit("Gemini did not return a usable story")
+        sys.exit("::error::The AI did not return a usable story")
     story["voice"] = random.choice(VOICES)
     if story.get("narrator") not in ("female", "male"):
         story["narrator"] = "female"
