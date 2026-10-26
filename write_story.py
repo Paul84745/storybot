@@ -29,7 +29,7 @@ narrated over gameplay). Follow this playbook:
 
 {playbook}
 
-Recent stories (do NOT repeat their premise or story type; last type used: {last_type}):
+Recent stories (do NOT repeat their premise; do NOT use these recent story types: {last_type}):
 {avoid}
 
 Brainstorm 10 fresh, original premises spread across at least 6 different story types.
@@ -67,17 +67,21 @@ Playbook:
 
 {playbook}
 
-Improve this 3-part story so viewers watch every second and follow for the next part:
-- Make the first sentence of Part 1 as shocking and specific as possible.
-- Cut any backstory, filler or explaining feelings; replace with escalation, dialogue and reveals.
-- Make sure the end of Parts 1 and 2 cuts right before a revelation and makes the viewer NEED the next part.
-- Make the Part 3 payoff more satisfying, and end it with a verdict question to the viewer.
-- Keep the same plot, narrator, title idea and JSON fields (title, type, narrator, captions, parts). Each part must stay 220 to 250 words — count them. NEVER shorten a part: replace weak sentences with stronger ones of similar length.
+This is Part {n} of 3 of the story "{title}". Rewrite it so viewers watch every second:
+{goal}
+- Cut backstory, filler and explaining feelings; replace them with escalation, dialogue and reveals.
+- Keep the same events, narrator and facts. Same length or longer: about {words} words. NEVER shorter.
 
-Story JSON:
-{story}
+Part {n}:
+{text}
 
-Return ONLY the improved story as JSON with the same fields."""
+Return ONLY JSON: {{"text": "the rewritten part"}}"""
+
+GOALS = {
+    1: "- Make the first sentence as shocking and specific as possible.\n- End right before a revelation so the viewer NEEDS Part 2.",
+    2: "- Open with a one-line recap of the stakes.\n- End right before an even bigger revelation so the viewer NEEDS Part 3.",
+    3: "- Open with a one-line recap of the stakes.\n- Make the payoff as satisfying as possible and end by asking the viewer for their verdict.",
+}
 
 
 def gemini(prompt):
@@ -175,11 +179,12 @@ def valid(s):
 def pick_premise(hist):
     recent = hist[-30:]
     avoid = "\n".join(f"- [{h.get('type', '?')}] {h['title']}" for h in recent) or "- none yet"
-    last_type = recent[-1].get("type", "none") if recent else "none"
+    recent_types = [str(h.get("type", "")).lower() for h in recent[-3:]]
+    last_type = ", ".join(t for t in recent_types if t) or "none"
     for attempt in range(3):
         data = parse(write(BRAINSTORM.format(playbook=playbook(), avoid=avoid, last_type=last_type)))
         prem = [p for p in (data or {}).get("premises", []) if isinstance(p, dict) and p.get("hook")]
-        prem = [p for p in prem if str(p.get("type", "")).lower() != str(last_type).lower()] or prem
+        prem = [p for p in prem if str(p.get("type", "")).lower() not in recent_types] or prem
         if prem:
             prem.sort(key=lambda p: -float(p.get("score", 0) or 0))
             best = random.choice(prem[:2])   # a little variety among the top ideas
@@ -204,15 +209,22 @@ def main(out):
         print(f"::warning::draft {attempt + 1} rejected (part word counts {lens})")
     if not story:
         sys.exit("::error::The AI did not return a usable story")
-    edited = parse(write(EDIT.format(playbook=playbook(), story=json.dumps(story, indent=1))))
-    if valid(edited):
-        for k in ("title", "type", "narrator", "captions"):
-            edited.setdefault(k, story.get(k))
-        story = edited
-        print("::notice::editor pass applied")
-    else:
-        lens = [len(p.split()) for p in (edited or {}).get("parts", []) if isinstance(p, str)] if isinstance(edited, dict) else "no JSON"
-        print(f"::warning::editor pass rejected ({lens}); using first draft")
+    improved = 0
+    for i, part in enumerate(story["parts"]):
+        n = len(part.split())
+        try:
+            res = parse(write(EDIT.format(playbook=playbook(), n=i + 1, title=story["title"], goal=GOALS[i + 1],
+                                          words=n, text=part)))
+            new = (res or {}).get("text") if isinstance(res, dict) else None
+        except Exception as e:
+            new = None
+            print(f"::warning::editor failed on part {i + 1}: {e}")
+        if isinstance(new, str) and len(new.split()) >= 0.92 * n:
+            story["parts"][i] = new.strip()
+            improved += 1
+        else:
+            print(f"::warning::editor kept original part {i + 1} ({len(new.split()) if isinstance(new, str) else 0} vs {n} words)")
+    print(f"::notice::editor improved {improved}/3 parts")
     story["voice"] = random.choice(VOICES)
     story["premise"] = prem
     if story.get("narrator") not in ("female", "male"):
