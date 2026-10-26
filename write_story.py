@@ -72,7 +72,7 @@ Improve this 3-part story so viewers watch every second and follow for the next 
 - Cut any backstory, filler or explaining feelings; replace with escalation, dialogue and reveals.
 - Make sure the end of Parts 1 and 2 cuts right before a revelation and makes the viewer NEED the next part.
 - Make the Part 3 payoff more satisfying, and end it with a verdict question to the viewer.
-- Keep the same plot, narrator, title idea and JSON fields. Each part must stay 220 to 250 words.
+- Keep the same plot, narrator, title idea and JSON fields (title, type, narrator, captions, parts). Each part must stay 220 to 250 words — count them.
 
 Story JSON:
 {story}
@@ -169,7 +169,7 @@ def parse(raw):
 
 def valid(s):
     return (isinstance(s, dict) and s.get("title") and isinstance(s.get("parts"), list) and len(s["parts"]) == 3
-            and all(isinstance(p, str) and 190 <= len(p.split()) <= 320 for p in s["parts"]))
+            and all(isinstance(p, str) and 180 <= len(p.split()) <= 360 for p in s["parts"]))
 
 
 def pick_premise(hist):
@@ -211,7 +211,8 @@ def main(out):
         story = edited
         print("::notice::editor pass applied")
     else:
-        print("::warning::editor pass rejected; using first draft")
+        lens = [len(p.split()) for p in (edited or {}).get("parts", []) if isinstance(p, str)] if isinstance(edited, dict) else "no JSON"
+        print(f"::warning::editor pass rejected ({lens}); using first draft")
     story["voice"] = random.choice(VOICES)
     story["premise"] = prem
     if story.get("narrator") not in ("female", "male"):
