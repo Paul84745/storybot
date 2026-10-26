@@ -121,7 +121,15 @@ def narrate(text, story, base):
     try:
         rate = int(os.environ.get("VOICE_RATE", 10))  # brisk, energetic delivery
         for _ in range(3):
-            audio, words = edge_narrate(text, voice, f"{rate:+d}%", base)
+            for attempt in range(5):   # the free voice service has occasional hiccups: retry before giving up
+                try:
+                    audio, words = edge_narrate(text, voice, f"{rate:+d}%", base)
+                    break
+                except Exception as e:
+                    if attempt == 4:
+                        raise
+                    print(f"::warning::voice retry {attempt + 1}: {e}")
+                    time.sleep(10 * (attempt + 1))
             dur = probe_duration(audio)
             if dur >= MIN_SECONDS or rate <= 0:
                 break
