@@ -35,7 +35,8 @@ Recent stories (do NOT repeat their premise; do NOT use these recent story types
 Brainstorm 10 fresh, original premises spread across at least 6 different story types.
 For each give: type, hook (the one shocking first sentence the narrator says), twist (the reveal the
 viewer won't see coming), debate (why viewers will argue in the comments), and score 1-100 for how
-likely it is to go viral (be harsh: generic or predictable ideas score under 50).
+likely it is to go viral and keep viewers on the edge of their seat (be harsh: anything without real danger,
+a ticking clock or a gripping mystery scores under 60; generic or predictable ideas score under 50).
 Return ONLY JSON: {{"premises": [{{"type": "...", "hook": "...", "twist": "...", "debate": "...", "score": 0}}]}}"""
 
 WRITE = """You are the head writer of a hugely successful TikTok storytime account. Follow this playbook:
@@ -53,6 +54,7 @@ Rules:
 - Part 1's FIRST sentence is the hook (you may sharpen it). No preamble.
 - Parts 1 and 2 stop right before a major revelation. Parts 2 and 3 open with a one-line recap of the stakes.
 - Part 3 pays everything off with the twist and ends by asking the viewer for their verdict.
+- Edge-of-your-seat suspense: present tense, a ticking clock, rising danger, false relief, sensory details at peak moments.
 - Simple words, short punchy sentences, dialogue, written to be read aloud with energy. Spell out numbers.
 - Do not write "follow for part 2" (added automatically). No real people, brands or places.
 Also write:
@@ -70,6 +72,7 @@ Playbook:
 This is Part {n} of 3 of the story "{title}". Rewrite it so viewers watch every second:
 {goal}
 - Cut backstory, filler and explaining feelings; replace them with escalation, dialogue and reveals.
+- Crank up the suspense: present tense, ticking clock, sensory details, very short sentences at the scariest moments.
 - Keep the same events, narrator and facts. Same length or longer: about {words} words. NEVER shorter.
 
 Part {n}:

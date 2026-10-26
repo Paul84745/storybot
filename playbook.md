@@ -4,7 +4,21 @@ What top story accounts do, and what the writer follows. Edit freely — the
 system reads this file every run. Add learnings from your own analytics under
 "Our results" (e.g. which story types got the most views or follows).
 
+## The #1 rule: edge-of-your-seat suspense
+Every story must feel like a thriller, whatever its type. The viewer should feel their heart rate go up.
+- A ticking clock: something terrible happens at a specific time unless the narrator acts ("The wedding starts in 40 minutes").
+- Real danger or high stakes: losing a home, a child, a marriage, freedom, money, safety. Never low stakes.
+- Tell it in PRESENT tense, as if it's happening right now ("I open the door. Nobody's there. But the lights are on.").
+- Dramatic irony: the narrator (and viewer) knows something the other characters don't, or vice versa.
+- False relief: just when it seems safe, something worse happens.
+- Sensory details at the scariest moments: a sound, a smell, a shadow, a vibrating phone.
+- Very short sentences at peak moments. One-word sentences. "Then. Silence."
+- Cliffhangers cut MID-ACTION: footsteps on the stairs, a text arrives, a door handle turns.
+
 ## Story types that perform
+- Suspense thriller: the narrator discovers something dangerous and must act before it's too late.
+- Mystery: a strange clue, a secret identity, someone is not who they say they are.
+- Something is wrong: a babysitting job, a new house, a road trip, a date that gets creepier every minute (no gore).
 - Moral dilemma ("Am I wrong for...?"): viewers argue in the comments. Make it genuinely debatable.
 - Pro revenge / petty revenge: slow-burn setup, clever legal payback, very satisfying ending.
 - Malicious compliance: someone demands rules be followed, narrator follows them literally, it backfires on them.
