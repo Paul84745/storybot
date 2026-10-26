@@ -51,26 +51,48 @@ def gemini(prompt):
     return data["candidates"][0]["content"]["parts"][0]["text"]
 
 
-GROQ_MODELS = [m for m in [os.environ.get("GROQ_MODEL")] if m] + [
-    "openai/gpt-oss-120b", "llama-3.3-70b-versatile", "moonshotai/kimi-k2-instruct"]
+GROQ_PREFERRED = [m for m in [os.environ.get("GROQ_MODEL")] if m] + [
+    "openai/gpt-oss-120b", "openai/gpt-oss-20b"]
+
+
+def groq_call(path, body=None):
+    req = urllib.request.Request("https://api.groq.com/openai/v1/" + path,
+                                 json.dumps(body).encode() if body else None, {
+        "Content-Type": "application/json", "Authorization": "Bearer " + os.environ["GROQ_API_KEY"],
+        "User-Agent": "storybot"})
+    with urllib.request.urlopen(req, timeout=180) as r:
+        return json.load(r)
+
+
+def groq_models():
+    """Preferred models first, then whatever large chat models Groq currently offers."""
+    try:
+        live = [m["id"] for m in groq_call("models")["data"]]
+    except Exception:
+        return GROQ_PREFERRED
+    extra = [m for m in live if m not in GROQ_PREFERRED and not re.search(r"whisper|tts|guard|orpheus|playai|compound", m)]
+    extra.sort(key=lambda m: -max([int(x) for x in re.findall(r"(\d+)b", m)] or [0]))
+    return [m for m in GROQ_PREFERRED if m in live] + extra
 
 
 def groq(prompt):
     last = None
-    for model in GROQ_MODELS:
-        body = {"model": model, "temperature": 1.0, "response_format": {"type": "json_object"},
+    for model in groq_models():
+        body = {"model": model, "temperature": 1.0, "max_completion_tokens": 8000,
                 "messages": [{"role": "user", "content": prompt}]}
-        req = urllib.request.Request("https://api.groq.com/openai/v1/chat/completions", json.dumps(body).encode(), {
-            "Content-Type": "application/json", "Authorization": "Bearer " + os.environ["GROQ_API_KEY"],
-            "User-Agent": "storybot"})
+        if "gpt-oss" in model:
+            body["reasoning_effort"] = "low"
         try:
-            with urllib.request.urlopen(req, timeout=120) as r:
-                return json.load(r)["choices"][0]["message"]["content"]
+            text = groq_call("chat/completions", body)["choices"][0]["message"]["content"] or ""
+            m = re.search(r"\{.*\}", text, re.S)
+            if m:
+                return m.group(0)
+            print(f"::warning::groq {model} returned no JSON")
         except Exception as e:
             last = e
             detail = e.read().decode()[:300] if hasattr(e, "read") else ""
             print(f"::warning::groq {model} failed: {e} {detail}")
-    raise last
+    raise last or RuntimeError("no Groq model returned a story")
 
 
 def write(prompt):
