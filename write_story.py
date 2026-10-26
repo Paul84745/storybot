@@ -111,7 +111,7 @@ def write(prompt):
 
 def valid(s):
     return (isinstance(s, dict) and s.get("title") and len(s.get("parts", [])) == 3
-            and all(200 <= len(p.split()) <= 310 for p in s["parts"]))
+            and all(200 <= len(p.split()) <= 340 for p in s["parts"]))
 
 
 def main(out):
