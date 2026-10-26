@@ -76,9 +76,13 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                     "-f", "lavfi", "-i", f"color=c=0x11152E:s=1080x1920:r=30:d={t:.2f}",
                     "-filter_complex", ";".join(fl) + f";[{len(segs)}:v]ass=vs/labels.ass[v]",
                     "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-preset", "veryfast", "-crf", "28",
-                    "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-shortest", out], check=True)
+                    "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-shortest", out], check=True, stderr=subprocess.PIPE, text=True)
     print(f"::notice::sampler with {len(segs)} voices, {t:.0f}s")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    try:
+        main(sys.argv[1])
+    except Exception as e:
+        print(f"::error::{e!r}"[:500])
+        raise

@@ -12,6 +12,10 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -q edge-tts
+      - name: ffmpeg
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: command -v ffmpeg >/dev/null || (timeout 600 sudo -E apt-get update -qq && timeout 900 sudo -E apt-get install -y -qq --no-install-recommends ffmpeg)
       - name: Font
         run: |
           fc-list | grep -qi poppins || (mkdir -p ~/.fonts && curl -sSL -o ~/.fonts/Poppins-Bold.ttf https://github.com/google/fonts/raw/main/ofl/poppins/Poppins-Bold.ttf && fc-cache -f)
