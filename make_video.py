@@ -165,8 +165,7 @@ Style: Title,Poppins,70,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
-    ev = [f"Dialogue: 1,{ass_time(0)},{ass_time(total)},Badge,,0,0,0,,{part_label}",
-          f"Dialogue: 1,{ass_time(0)},{ass_time(total)},Label,,0,0,0,,AI-generated fictional story"]
+    ev = [f"Dialogue: 1,{ass_time(0)},{ass_time(total)},Badge,,0,0,0,,{part_label}"]
     if title:
         ev.append(f"Dialogue: 1,{ass_time(0)},{ass_time(4.5)},Title,,0,0,0,,{{\\fad(0,400)}}{esc(title)}")
     groups, cur = [], []
