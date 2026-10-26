@@ -193,7 +193,7 @@ def fetch_image(prompt, seed, path):
     url = ("https://image.pollinations.ai/prompt/" + urllib.parse.quote(prompt[:300] + style) +
            f"?width={W}&height={H}&nologo=true&seed={seed}&model=flux")
     for attempt in range(4):
-        time.sleep(4 if attempt == 0 else 15 * attempt)  # free tier allows one request at a time
+        time.sleep(46 if attempt == 0 else 20 * attempt)  # free tier: one image per 45s per IP
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 storybot"})
             with urllib.request.urlopen(req, timeout=240) as r:
