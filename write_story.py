@@ -116,22 +116,30 @@ def groq_models():
 
 
 def groq(prompt):
+    import time
     last = None
     for model in groq_models():
         body = {"model": model, "temperature": 1.0, "max_completion_tokens": 8000,
                 "messages": [{"role": "user", "content": prompt}]}
         if "gpt-oss" in model:
             body["reasoning_effort"] = "low"
-        try:
-            text = groq_call("chat/completions", body)["choices"][0]["message"]["content"] or ""
-            m = re.search(r"\{.*\}", text, re.S)
-            if m:
-                return m.group(0)
-            print(f"::warning::groq {model} returned no JSON")
-        except Exception as e:
-            last = e
-            detail = e.read().decode()[:300] if hasattr(e, "read") else ""
-            print(f"::warning::groq {model} failed: {e} {detail}")
+        for tries in range(4):
+            try:
+                text = groq_call("chat/completions", body)["choices"][0]["message"]["content"] or ""
+                m = re.search(r"\{.*\}", text, re.S)
+                if m:
+                    return m.group(0)
+                print(f"::warning::groq {model} returned no JSON")
+                break
+            except Exception as e:
+                last = e
+                detail = e.read().decode()[:400] if hasattr(e, "read") else ""
+                if getattr(e, "code", None) == 429 and tries < 3:   # free-tier rate limit: wait it out
+                    w = re.search(r"try again in ([0-9.]+)s", detail)
+                    time.sleep(float(w.group(1)) + 3 if w else 30)
+                    continue
+                print(f"::warning::groq {model} failed: {e} {detail[:250]}")
+                break
     raise last or RuntimeError("no Groq model returned a story")
 
 
