@@ -189,7 +189,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
 # ---------------------------------------------------------------- backgrounds
 def fetch_image(prompt, seed, path):
-    style = ", cinematic photo, dramatic lighting, vertical composition, highly detailed, no text"
+    style = ", cinematic photo, bright natural light, vertical composition, highly detailed, no text"
     url = ("https://image.pollinations.ai/prompt/" + urllib.parse.quote(prompt[:300] + style) +
            f"?width={W}&height={H}&nologo=true&seed={seed}&model=flux")
     for attempt in range(4):
@@ -246,7 +246,7 @@ def background_input(mode, prompts, total, base, idx):
     if mode in ("auto", "scenes") and prompts:
         bg = scenes_background(prompts, total, base)
         if bg:
-            return ["-i", bg], "eq=brightness=-0.10:saturation=1.1", bg
+            return ["-i", bg], "eq=brightness=-0.03:saturation=1.1", bg
     c = random.choice(PALETTES)
     return (["-f", "lavfi", "-i", f"gradients=s=270x480:r={FPS}:n=4:speed=0.015:type=radial:"
              f"c0={c[0]}:c1={c[1]}:c2={c[2]}:c3={c[3]}:seed={idx * 7}"],
