@@ -117,7 +117,7 @@ def kokoro_narrate(text, voice, speed, base):
 def narrate(text, story, base):
     """Returns (audio_path, words, duration), slowing down if under a minute."""
     gender = story.get("narrator", "female")
-    voice = story.get("edge_voice") or random.Random(story.get("title")).choice(EDGE_VOICES[gender])
+    voice = os.environ.get("VOICE") or story.get("edge_voice") or random.Random(story.get("title")).choice(EDGE_VOICES[gender])
     try:
         rate = int(os.environ.get("VOICE_RATE", 15))  # brisk, energetic delivery
         for _ in range(3):

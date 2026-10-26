@@ -82,6 +82,7 @@ jobs:
         env:
           BG_MODE: ${{ vars.BG_MODE || 'auto' }}
           VOICE_RATE: ${{ vars.VOICE_RATE || '15' }}
+          VOICE: ${{ vars.VOICE }}
         run: python make_video.py "${{ steps.story.outputs.file }}" out
 
       - name: Write caption file
