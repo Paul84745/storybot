@@ -318,7 +318,7 @@ def render_part(story, idx, out_dir):
     run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *bg_in, "-i", audio,
          "-filter_complex", f"[0:v]{bg_vf},ass={base}.ass[v];[1:a]apad,loudnorm=I=-14:TP=-1.5[a]",
          "-map", "[v]", "-map", "[a]", "-t", f"{total:.2f}", "-r", str(FPS),
-         "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-maxrate", "5M", "-bufsize", "10M", "-pix_fmt", "yuv420p",
+         "-c:v", "libx264", "-preset", "veryfast", "-crf", "24", "-maxrate", "3500k", "-bufsize", "7M", "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", base + ".mp4"])
     for f in (audio, base + ".mp3", base + ".ass", base + "_bg.mp4"):
         if os.path.exists(f):

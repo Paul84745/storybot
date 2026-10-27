@@ -121,6 +121,8 @@ void main(){
       emis = v_c.rgb * (smoothstep(0.43, 0.49, e) * 0.9 + (1.0 - smoothstep(0.0, 0.09, edge)) * 1.8);
       alb = vec3(0.06, 0.06, 0.1) + alb * 0.08;
     }
+  } else if (mat > 2.5) {                             // the runner: a touch of self-light so it never gets lost
+    emis = alb * (0.12 + 0.5 * u_neon);
   } else if (mat > 1.5 && mat < 2.5) {                // glowing: gems, pads, rings
     emis = alb * (0.75 + 0.25 * sin(u_time * 6.0 + v_w.z * 0.7));
     alb *= 0.55;
@@ -550,7 +552,7 @@ def runner_parts(p, yaw, pose, outfit, skin, squash):
         Lg = H @ T(side * 0.17, 0.0, 0) @ RX(leg)
         parts.append((Lg @ box(0, -0.43, 0, 0.25, 0.84, 0.28), pants))
         parts.append((Lg @ box(0, -0.9, 0.05, 0.28, 0.15, 0.38), shoes))
-    return [(m, (*c, 0)) for m, c in parts]
+    return [(m, (*c, 3)) for m, c in parts]
 
 
 # ---------------------------------------------------------------- render
