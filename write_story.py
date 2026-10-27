@@ -191,13 +191,40 @@ def valid(s):
             and all(isinstance(p, str) and 180 <= nwords(p) <= 360 for p in s["parts"]))
 
 
+WHATIF_BRAIN = """
+Each premise is a world-changing "What if...?" that hits everyone at once, with ONE named person caught in it:
+e.g. what if every man vanished overnight except one; what if your phone showed how many days everyone has left;
+what if the sun didn't rise and only one girl could still see in the dark; what if every lie you told appeared
+on your forehead. The hook is the "What if...?" question itself. NOT a personal mystery or a crime story."""
+
+WHATIF_WRITE = """
+This is a "What if" scenario. Follow this structure exactly:
+- Third person, present tense, a named main character. Part 1's first sentence is the "What if...?" question.
+- Part 1: the world-changing event on DAY 1, what it means, and the first survival rules (RULE 1, RULE 2), each with a
+  vivid reason. End as a threat appears (a drone, a voice, a knock, a tracker).
+- Part 2: time jumps (DAY 2, DAY 3...), RULE 3 and RULE 4, a hideout, the threat closing in, a voice or message that
+  claims to want to help. End mid-action.
+- Part 3: DAY 7 or later, the confrontation or escape, and a twist that reveals a bigger world (a note, a message,
+  a location, "you are not the only one"). End on that mystery and ask viewers what they would do.
+- At least 4 [[STAMP]] markers in EVERY part: every time jump and every rule gets its own stamp."""
+
+
+def is_whatif(t):
+    return "what if" in str(t).lower()
+
+
+def stamps_ok(story, need):
+    return all(p.count("[[") >= need for p in story["parts"])
+
+
 def pick_premise(hist):
     recent = hist[-30:]
     avoid = "\n".join(f"- [{h.get('type', '?')}] {h['title']}" for h in recent) or "- none yet"
     recent_types = [str(h.get("type", "")).lower() for h in recent[-3:]]
     last_type = ", ".join(t for t in recent_types if t) or "none"
     for attempt in range(3):
-        only = (f"Brainstorm 10 fresh, original premises, ALL of this story type: {FORCE_TYPE}." if FORCE_TYPE else
+        only = (f"Brainstorm 10 fresh, original premises, ALL of this story type: {FORCE_TYPE}." + (WHATIF_BRAIN if is_whatif(FORCE_TYPE) else "")
+                if FORCE_TYPE else
                 "Brainstorm 10 fresh, original premises spread across at least 6 different story types.")
         data = parse(write(BRAINSTORM.format(playbook=playbook(), avoid=avoid, last_type=last_type, only=only)))
         prem = [p for p in (data or {}).get("premises", []) if isinstance(p, dict) and p.get("hook")]
@@ -221,13 +248,21 @@ def main(out):
     hist = json.load(open(HIST)) if os.path.exists(HIST) else []
     prem = pick_premise(hist)
     story = None
-    for attempt in range(4):
-        cand = parse(write(WRITE.format(playbook=playbook(), **{k: prem.get(k, "") for k in ("type", "hook", "twist", "debate")})))
+    need = 4 if is_whatif(prem.get("type")) else 2
+    extra = WHATIF_WRITE if is_whatif(prem.get("type")) else ""
+    fallback = None
+    for attempt in range(5):
+        cand = parse(write(WRITE.format(playbook=playbook(), **{k: prem.get(k, "") for k in ("type", "hook", "twist", "debate")}) + extra))
         if valid(cand):
-            story = cand
-            break
-        lens = [len(p.split()) for p in cand.get("parts", []) if isinstance(p, str)] if isinstance(cand, dict) else []
+            if stamps_ok(cand, need):
+                story = cand
+                break
+            fallback = fallback or cand
+            print(f"::warning::draft {attempt + 1} has too few stamps {[p.count('[[') for p in cand['parts']]}")
+            continue
+        lens = [nwords(p) for p in cand.get("parts", []) if isinstance(p, str)] if isinstance(cand, dict) else []
         print(f"::warning::draft {attempt + 1} rejected (part word counts {lens})")
+    story = story or fallback
     if not story:
         sys.exit("::error::The AI did not return a usable story")
     improved = 0
