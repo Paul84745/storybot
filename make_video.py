@@ -156,7 +156,7 @@ def esc(w):
     return w.replace("{", "(").replace("}", ")")
 
 
-def build_ass(words, total, part_label, title, path):
+def build_ass(words, total, part_label, title, path, hud=None):
     head = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {W}
@@ -169,6 +169,8 @@ Style: Cap,Poppins,112,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,1
 Style: Badge,Poppins,54,&H00FFFFFF,&H00FFFFFF,&H00000000,&H96000000,1,0,0,0,100,100,0,0,3,14,0,8,0,0,170,1
 Style: Label,Poppins,36,&H00E6E6E6,&H00FFFFFF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,3,0,8,0,0,265,1
 Style: Title,Poppins,70,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,7,2,8,90,90,360,1
+Style: Hud,Poppins,68,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,5,2,4,0,0,0,1
+Style: Banner,Poppins,96,&H0033FF66,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,2,0,1,7,3,5,0,0,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -192,8 +194,33 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                            for j, (x, _, _) in enumerate(g))
             pop = "\\fscx72\\fscy72\\t(0,90,\\fscx106\\fscy106)\\t(90,150,\\fscx100\\fscy100)" if i == 0 else ""
             ev.append(f"Dialogue: 0,{ass_time(s)},{ass_time(max(end, s + 0.05))},Cap,,0,0,0,,{{\\pos({W//2},{H//2 - 230}){pop}}}{txt}")
+    if hud:
+        ev += hud_events(hud, total)
     with open(path, "w") as f:
         f.write(head + "\n".join(ev) + "\n")
+
+
+def hud_events(hud, total, y=205):
+    """Game HUD over the gameplay: gem counter (top left), race timer (top right), checkpoint pop-ups."""
+    ev = [f"Dialogue: 2,{ass_time(0)},{ass_time(total)},Hud,,0,0,0,,"
+          f"{{\\an5\\pos(78,{y})\\p1\\bord4\\3c&H000000&\\1c&H22CCFF&}}m 0 -28 l 21 -6 l 0 28 l -21 -6{{\\p0}}"]
+    times = [t for t in hud.get("gems", []) if t < total]
+    edges = [0.0] + times + [total]
+    for k in range(len(edges) - 1):
+        a, b = edges[k], edges[k + 1]
+        if b - a < 0.01:
+            continue
+        pop = "\\fscx135\\fscy135\\t(0,160,\\fscx100\\fscy100)" if k else ""
+        ev.append(f"Dialogue: 2,{ass_time(a)},{ass_time(b)},Hud,,0,0,0,,{{\\an4\\pos(112,{y}){pop}}}{k}")
+    steps = int(total * 10)
+    for i in range(steps):
+        a, b = i / 10, min(total, (i + 1) / 10)
+        ev.append(f"Dialogue: 2,{ass_time(a)},{ass_time(b)},Hud,,0,0,0,,{{\\an6\\pos({W - 50},{y})}}{i // 600}:{i // 10 % 60:02d}.{i % 10}")
+    for t in hud.get("checkpoints", []):
+        if t < total - 0.5:
+            ev.append(f"Dialogue: 3,{ass_time(t)},{ass_time(min(total, t + 1.4))},Banner,,0,0,0,,"
+                      f"{{\\pos({W // 2},{H - 420})\\fscx55\\fscy55\\t(0,170,\\fscx115\\fscy115)\\t(170,300,\\fscx100\\fscy100)\\fad(0,350)}}CHECKPOINT!")
+    return ev
 
 
 # ---------------------------------------------------------------- backgrounds
@@ -281,9 +308,13 @@ def render_part(story, idx, out_dir):
         text = f"Part {idx}. " + text
     base = os.path.join(out_dir, f"part{idx}")
     audio, words, total = narrate(text, story, base)
-    build_ass(words, total, f"PART {idx}/{n}", story.get("title", ""), base + ".ass")
     scenes = (story.get("scenes") or [[]] * n)[idx - 1] if story.get("scenes") else []
     bg_in, bg_vf, bg_file = background_input(os.environ.get("BG_MODE", "auto"), scenes, total, base, idx)
+    hud = None
+    if bg_file and os.path.exists(bg_file + ".hud.json"):
+        hud = json.load(open(bg_file + ".hud.json"))
+        os.remove(bg_file + ".hud.json")
+    build_ass(words, total, f"PART {idx}/{n}", story.get("title", ""), base + ".ass", hud)
     run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *bg_in, "-i", audio,
          "-filter_complex", f"[0:v]{bg_vf},ass={base}.ass[v];[1:a]apad,loudnorm=I=-14:TP=-1.5[a]",
          "-map", "[v]", "-map", "[a]", "-t", f"{total:.2f}", "-r", str(FPS),

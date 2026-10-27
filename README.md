@@ -14,8 +14,11 @@ Every day it:
 - Actions → storybot → Run workflow to test
 
 ## Backgrounds
-- **Generated 3D parkour gameplay (default):** a character runs and jumps across floating block
-  platforms, collecting gems, with a fresh course and colour theme every video. Fully original footage.
+- **Generated 3D parkour gameplay (default):** an obby course with grassy platforms, beams, hop blocks,
+  stairs, jump pads that launch the runner into front flips through gold rings, and checkpoint gates.
+  Real shadows, animated sky with clouds or stars, ocean or lava below, particles, a swinging/shaking
+  camera, and a game HUD (gem counter, timer, CHECKPOINT! pop-ups). Six themes: sky islands, sunset,
+  neon night, lava, candy, snow. Fully original footage; a fresh course every video.
 - **Your own gameplay:** upload `.mp4` clips to a release tagged `backgrounds` and they're used instead
   (random clip, random start). Filenames containing "fortnite" get Epic's disclaimer in the caption.
 - Repo variable `BG_MODE` = `gameplay` (default), `scenes` (AI illustrations) or `gradient`.
