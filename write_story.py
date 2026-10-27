@@ -290,7 +290,13 @@ def main(out):
         story.pop("scenes", None)
     caps = story.get("captions")
     if not (isinstance(caps, list) and len(caps) == 3 and all(isinstance(c, str) for c in caps)):
-        story["captions"] = [f"{story['title']} (part {i}) #storytime #fyp #foryou #drama" for i in (1, 2, 3)]
+        caps = ["#storytime #fyp #foryou #drama"] * 3
+    fixed = []
+    for i, c in enumerate(caps, 1):     # a caption that is only hashtags gets the title in front of it
+        if not re.sub(r"#\S+", "", c).strip():
+            c = f"{story['title']} (part {i}) {c.strip()}"
+        fixed.append(c)
+    story["captions"] = fixed
     story["caption"] = story["captions"][0]
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     json.dump(story, open(out, "w"), indent=2)
