@@ -9,9 +9,17 @@ on:
         description: "Render an existing story JSON instead of writing a new one (optional)"
         type: string
         default: ""
+      story_type:
+        description: "Force a story type, e.g. What if scenario (optional)"
+        type: string
+        default: ""
+      bg_mode:
+        description: "Background: gameplay, scenes (cartoon illustrations) or auto"
+        type: string
+        default: ""
 
 concurrency:
-  group: storybot
+  group: storybot-${{ github.run_id }}
   cancel-in-progress: false
 
 permissions:
@@ -68,10 +76,17 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          FORCE_TYPE: ${{ inputs.story_type }}
         run: |
           if [ -n "${{ inputs.story_file }}" ]; then F="${{ inputs.story_file }}"; else
             F="stories/$(date -u +%Y-%m-%d-%H%M).json"; python write_story.py "$F"; fi
           echo "file=$F" >> "$GITHUB_OUTPUT"
+
+      - name: Save story history
+        run: |
+          git config user.name storybot && git config user.email storybot@users.noreply.github.com
+          git add stories state playbook.md && git commit -qm "story $(date -u +%F)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase && git push -q && break; sleep 7; done
 
       - name: Get gameplay clips (upload yours to a release tagged "backgrounds")
         env:
@@ -80,7 +95,8 @@ jobs:
 
       - name: Render videos
         env:
-          BG_MODE: ${{ vars.BG_MODE || 'auto' }}
+          BG_MODE: ${{ inputs.bg_mode || vars.BG_MODE || 'auto' }}
+          SCENE_STYLE: ${{ vars.SCENE_STYLE }}
           VOICE_RATE: ${{ vars.VOICE_RATE || '10' }}
           VOICE: ${{ vars.VOICE }}
         run: python make_video.py "${{ steps.story.outputs.file }}" out
@@ -99,11 +115,6 @@ jobs:
                   extra = epic if "fortnite" in bgs[i - 1].lower() else ""
                   f.write(f"PART {i}:\n{caps[i - 1]}{extra}\n\n")
           PY
-
-      - name: Save story history
-        run: |
-          git config user.name storybot && git config user.email storybot@users.noreply.github.com
-          git add stories state playbook.md && git commit -qm "story $(date -u +%F)" && git push || true
 
       - name: Publish videos as a release
         env:

@@ -156,7 +156,7 @@ def esc(w):
     return w.replace("{", "(").replace("}", ")")
 
 
-def build_ass(words, total, part_label, title, path, hud=None):
+def build_ass(words, total, part_label, title, path, hud=None, stamps=None):
     head = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {W}
@@ -170,6 +170,7 @@ Style: Badge,Poppins,54,&H00FFFFFF,&H00FFFFFF,&H00000000,&H96000000,1,0,0,0,100,
 Style: Label,Poppins,36,&H00E6E6E6,&H00FFFFFF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,3,0,8,0,0,265,1
 Style: Title,Poppins,70,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,7,2,8,90,90,360,1
 Style: Hud,Poppins,68,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,5,2,4,0,0,0,1
+Style: Stamp,DejaVu Sans Mono,40,&H0036C8FF,&H00FFFFFF,&H00332011,&H00000000,1,0,0,0,100,100,2,0,3,10,0,8,0,0,0,1
 Style: Banner,Poppins,96,&H0033FF66,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,2,0,1,7,3,5,0,0,0,1
 
 [Events]
@@ -196,6 +197,14 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             ev.append(f"Dialogue: 0,{ass_time(s)},{ass_time(max(end, s + 0.05))},Cap,,0,0,0,,{{\\pos({W//2},{H//2 - 230}){pop}}}{txt}")
     if hud:
         ev += hud_events(hud, total)
+    if stamps:
+        stamps = sorted(stamps)
+        for i, (t0, label) in enumerate(stamps):
+            t1 = stamps[i + 1][0] if i + 1 < len(stamps) else total
+            if t1 - t0 < 0.3:
+                continue
+            ev.append(f"Dialogue: 2,{ass_time(t0)},{ass_time(t1)},Stamp,,0,0,0,,"
+                      f"{{\\pos({W // 2},285)\\fscx70\\fscy70\\t(0,140,\\fscx108\\fscy108)\\t(140,240,\\fscx100\\fscy100)}}{esc(label)}")
     with open(path, "w") as f:
         f.write(head + "\n".join(ev) + "\n")
 
@@ -225,7 +234,10 @@ def hud_events(hud, total, y=205):
 
 # ---------------------------------------------------------------- backgrounds
 def fetch_image(prompt, seed, path):
-    style = ", cinematic photo, bright natural light, vertical composition, highly detailed, no text"
+    style = (", cinematic photo, bright natural light, vertical composition, highly detailed, no text"
+             if os.environ.get("SCENE_STYLE") == "photo" else
+             ", flat 2D vector illustration, minimalist cartoon, motion-graphics explainer style, dark navy blue palette"
+             " with warm amber accents, soft shading, clean simple shapes, centered composition, no text, no words")
     url = ("https://image.pollinations.ai/prompt/" + urllib.parse.quote(prompt[:300] + style) +
            f"?width={W}&height={H}&nologo=true&seed={seed}&model=flux")
     for attempt in range(4):
@@ -301,11 +313,22 @@ def background_input(mode, prompts, total, base, idx):
 # ---------------------------------------------------------------- main
 def render_part(story, idx, out_dir):
     n = len(story["parts"])
-    text = re.sub(r"[*_#~`]+", "", story["parts"][idx - 1]).replace("1‑5‑3", "one fifty-three").strip()
-    text = re.sub(r"\s+", " ", text)
+    raw = re.sub(r"[*_#~`]+", "", story["parts"][idx - 1]).replace("1‑5‑3", "one fifty-three")
+    tokens, marks = [], []
+    for chunk in re.split(r"(\[\[.*?\]\])", raw):
+        m = re.fullmatch(r"\[\[(.*?)\]\]", chunk.strip())
+        if m:
+            label = re.sub(r"\s+", " ", m.group(1)).strip().upper()[:32]
+            if label:
+                marks.append((len(tokens), label))
+        else:
+            tokens += chunk.split()
+    text = " ".join(tokens)
     text += f" Follow for part {idx + 1}." if idx < n else " Follow for more stories."
+    lead = 0
     if idx > 1:
         text = f"Part {idx}. " + text
+        lead = 2
     base = os.path.join(out_dir, f"part{idx}")
     audio, words, total = narrate(text, story, base)
     scenes = (story.get("scenes") or [[]] * n)[idx - 1] if story.get("scenes") else []
@@ -314,7 +337,12 @@ def render_part(story, idx, out_dir):
     if bg_file and os.path.exists(bg_file + ".hud.json"):
         hud = json.load(open(bg_file + ".hud.json"))
         os.remove(bg_file + ".hud.json")
-    build_ass(words, total, f"PART {idx}/{n}", story.get("title", ""), base + ".ass", hud)
+    ntok = max(1, len(text.split()))
+    stamps = []
+    for k, label in marks:   # map each marker to the time its word is spoken
+        wi = min(len(words) - 1, round((k + lead) / ntok * len(words))) if words else 0
+        stamps.append((0.0 if k == 0 and idx == 1 else (words[wi][1] if words else 0.0), label))
+    build_ass(words, total, f"PART {idx}/{n}", story.get("title", ""), base + ".ass", hud, stamps)
     run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", *bg_in, "-i", audio,
          "-filter_complex", f"[0:v]{bg_vf},ass={base}.ass[v];[1:a]apad,loudnorm=I=-14:TP=-1.5[a]",
          "-map", "[v]", "-map", "[a]", "-t", f"{total:.2f}", "-r", str(FPS),

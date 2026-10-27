@@ -14,6 +14,7 @@ from datetime import date
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
 HIST = os.path.join(HERE, "state", "history.json")
+FORCE_TYPE = os.environ.get("FORCE_TYPE", "").strip()
 VOICES = ["af_heart", "af_bella", "af_nicole", "am_michael", "am_adam", "bf_emma"]
 
 
@@ -32,7 +33,7 @@ narrated over gameplay). Follow this playbook:
 Recent stories (do NOT repeat their premise; do NOT use these recent story types: {last_type}):
 {avoid}
 
-Brainstorm 10 fresh, original premises spread across at least 6 different story types.
+{only}
 For each give: type, hook (the one shocking first sentence the narrator says), twist (the reveal the
 viewer won't see coming), debate (why viewers will argue in the comments), and score 1-100 for how
 likely it is to go viral and keep viewers on the edge of their seat (be harsh: anything without real danger,
@@ -43,7 +44,8 @@ WRITE = """You are the head writer of a hugely successful TikTok storytime accou
 
 {playbook}
 
-Write this premise as an original, fictional, first-person story for a 3-part narrated series:
+Write this premise as an original, fictional story for a 3-part narrated series (first person; for a "What if"
+scenario use third person with a named main character):
 Type: {type}
 Opening hook: {hook}
 Twist: {twist}
@@ -57,12 +59,17 @@ Rules:
 - Edge-of-your-seat suspense: present tense, a ticking clock, rising danger, false relief, sensory details at peak moments.
 - Simple words, short punchy sentences, dialogue, written to be read aloud with energy. Spell out numbers.
 - Do not write "follow for part 2" (added automatically). No real people, brands or places.
+- On-screen stamps: put 3 to 6 chapter stamps per part INLINE in the text as [[LABEL]], right before the
+  sentence they introduce. Labels are short ALL CAPS, max 24 characters: time/place, a rule or a countdown,
+  e.g. [[DAY 1 · 06:40]], [[RULE 2 · DISGUISE]], [[9:41 PM · KITCHEN]], [[3 MINUTES LEFT]]. Part 1 starts with one.
 Also write:
 - title: the hook in max 9 words (can be a question), no quotes
 - captions: 3 TikTok captions (one per part, max 150 chars each, each ending with 6-8 hashtags mixing
   #storytime #fyp #foryou #drama with topic tags; part 3's caption asks viewers for their verdict)
-- narrator: "female" or "male"
-Return ONLY JSON: {{"title": "...", "type": "{type}", "narrator": "female", "captions": ["...", "...", "..."], "parts": ["...", "...", "..."]}}"""
+- narrator: "female" or "male" (the narrating voice; for third person pick what fits the story)
+- scenes: for EACH part, 8 short visual descriptions that illustrate it in order, for flat cartoon illustrations
+  (one simple moment each, max 20 words, describe characters by appearance and keep them identical, no text, nothing graphic)
+Return ONLY JSON: {{"title": "...", "type": "{type}", "narrator": "female", "captions": ["...", "...", "..."], "parts": ["...", "...", "..."], "scenes": [["..."], ["..."], ["..."]]}}"""
 
 EDIT = """You are a ruthless TikTok retention editor. Viewers swipe away the instant a story gets slow.
 Playbook:
@@ -74,6 +81,7 @@ This is Part {n} of 3 of the story "{title}". Rewrite it so viewers watch every 
 - Cut backstory, filler and explaining feelings; replace them with escalation, dialogue and reveals.
 - Crank up the suspense: present tense, ticking clock, sensory details, very short sentences at the scariest moments.
 - Keep the same events, narrator and facts. About {words} words (never shorter, at most 10% longer).
+- Keep every [[STAMP]] marker exactly as written, in front of the same moment.
 
 Part {n}:
 {text}
@@ -174,9 +182,13 @@ def parse(raw):
             return None
 
 
+def nwords(text):
+    return len(re.sub(r"\[\[.*?\]\]", " ", text).split())
+
+
 def valid(s):
     return (isinstance(s, dict) and s.get("title") and isinstance(s.get("parts"), list) and len(s["parts"]) == 3
-            and all(isinstance(p, str) and 180 <= len(p.split()) <= 360 for p in s["parts"]))
+            and all(isinstance(p, str) and 180 <= nwords(p) <= 360 for p in s["parts"]))
 
 
 def pick_premise(hist):
@@ -185,9 +197,15 @@ def pick_premise(hist):
     recent_types = [str(h.get("type", "")).lower() for h in recent[-3:]]
     last_type = ", ".join(t for t in recent_types if t) or "none"
     for attempt in range(3):
-        data = parse(write(BRAINSTORM.format(playbook=playbook(), avoid=avoid, last_type=last_type)))
+        only = (f"Brainstorm 10 fresh, original premises, ALL of this story type: {FORCE_TYPE}." if FORCE_TYPE else
+                "Brainstorm 10 fresh, original premises spread across at least 6 different story types.")
+        data = parse(write(BRAINSTORM.format(playbook=playbook(), avoid=avoid, last_type=last_type, only=only)))
         prem = [p for p in (data or {}).get("premises", []) if isinstance(p, dict) and p.get("hook")]
-        prem = [p for p in prem if str(p.get("type", "")).lower() not in recent_types] or prem
+        if FORCE_TYPE:
+            for p in prem:
+                p["type"] = FORCE_TYPE
+        else:
+            prem = [p for p in prem if str(p.get("type", "")).lower() not in recent_types] or prem
         if prem:
             prem.sort(key=lambda p: -float(p.get("score", 0) or 0))
             best = random.choice(prem[:2])   # a little variety among the top ideas
@@ -214,7 +232,7 @@ def main(out):
         sys.exit("::error::The AI did not return a usable story")
     improved = 0
     for i, part in enumerate(story["parts"]):
-        n = len(part.split())
+        n = nwords(part)
         try:
             res = parse(write(EDIT.format(playbook=playbook(), n=i + 1, title=story["title"], goal=GOALS[i + 1],
                                           words=n, text=part)))
@@ -222,7 +240,7 @@ def main(out):
         except Exception as e:
             new = None
             print(f"::warning::editor failed on part {i + 1}: {e}")
-        if isinstance(new, str) and 0.92 * n <= len(new.split()) <= max(n * 1.12, 270):
+        if isinstance(new, str) and 0.92 * n <= nwords(new) <= max(n * 1.12, 270) and new.count("[[") >= part.count("[[") - 1:
             story["parts"][i] = new.strip()
             improved += 1
         else:
@@ -232,6 +250,9 @@ def main(out):
     story["premise"] = prem
     if story.get("narrator") not in ("female", "male"):
         story["narrator"] = "female"
+    sc = story.get("scenes")
+    if not (isinstance(sc, list) and len(sc) == 3 and all(isinstance(x, list) and x for x in sc)):
+        story.pop("scenes", None)
     caps = story.get("captions")
     if not (isinstance(caps, list) and len(caps) == 3 and all(isinstance(c, str) for c in caps)):
         story["captions"] = [f"{story['title']} (part {i}) #storytime #fyp #foryou #drama" for i in (1, 2, 3)]
