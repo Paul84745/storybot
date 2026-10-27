@@ -73,7 +73,7 @@ This is Part {n} of 3 of the story "{title}". Rewrite it so viewers watch every 
 {goal}
 - Cut backstory, filler and explaining feelings; replace them with escalation, dialogue and reveals.
 - Crank up the suspense: present tense, ticking clock, sensory details, very short sentences at the scariest moments.
-- Keep the same events, narrator and facts. Same length or longer: about {words} words. NEVER shorter.
+- Keep the same events, narrator and facts. About {words} words (never shorter, at most 10% longer).
 
 Part {n}:
 {text}
@@ -222,7 +222,7 @@ def main(out):
         except Exception as e:
             new = None
             print(f"::warning::editor failed on part {i + 1}: {e}")
-        if isinstance(new, str) and len(new.split()) >= 0.92 * n:
+        if isinstance(new, str) and 0.92 * n <= len(new.split()) <= max(n * 1.12, 270):
             story["parts"][i] = new.strip()
             improved += 1
         else:
