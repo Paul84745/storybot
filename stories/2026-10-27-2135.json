@@ -1,0 +1,56 @@
+{
+  "title": "What if an app could save her?",
+  "type": "What if scenario (third person)",
+  "narrator": "female",
+  "captions": [
+    "My phone buzzes with a secret game that could bring my sister back. #storytime #fyp #foryou #drama #tech #mystery",
+    "The clock ticks. I\u2019m deeper in the game than I thought. #storytime #fyp #foryou #drama #suspense #deadline",
+    "The truth hits. Did I just play with my sister\u2019s life? Verdict? #storytime #fyp #foryou #drama #ethics #AI"
+  ],
+  "parts": [
+    "[[DAY 1 \u00b7 08:15]] I stare at the notification: \u201cFinish the game in twenty\u2011four hours, or she\u2019s gone forever.\u201d My sister, Maya, vanished two weeks ago. No police leads, no trace. My heart pounds. I open the app. A black screen flashes: \u201cWelcome, Player. Find her.\u201d [[RULE 1 \u00b7 FOLLOW CLUES]] The first clue appears: a photo of my childhood bedroom, a window cracked open. I rush home, breath shallow. The house is silent, except for the ticking of the old kitchen clock. I hear a faint rustle behind the dresser. I pull the drawer open\u2014nothing but dust. Suddenly, my phone vibrates: \u201c3 HOURS LEFT.\u201d Sweat drips down my neck. I run to the attic, remember the hidden trapdoor we built as kids. My fingers find the loose board. I pry it open, the wood creaks. A narrow shaft descends into darkness. I shine my phone\u2019s flashlight down, a glint catches my eye\u2014Maya\u2019s silver necklace. I gasp. The app pings: \u201cYou found the first token. Next clue: the park bench at sunset.\u201d I sprint out, the streetlights flicker, a cold wind whistles. My phone buzzes again\u2014[[COUNTDOWN 2 HOURS]]\u2014and I feel someone watching from the shadows. I don\u2019t look back. I\u2019m running out of time.",
+    "I\u2019m at the park, bench drenched in amber light. [[DAY 1 \u00b7 18:45]] The app flashes: \u201cLook under the seat.\u201d My hands shake as I lift the wooden slat. A folded note slides out, ink smeared: \u201cShe\u2019s alive. Trust no one.\u201d My breath catches. I hear footsteps behind me, quick and deliberate. I spin, phone in hand, the screen showing a timer: \u201c1 HOUR LEFT.\u201d A stranger in a dark hoodie steps forward, voice low: \u201cYou shouldn\u2019t be here.\u201d I stare at his eyes, empty of pity. I whisper, \u201cMaya?\u201d He laughs, a hollow sound. \u201cShe\u2019s not here. She\u2019s a test.\u201d My phone buzzes again: \u201cFinal clue: the abandoned warehouse, floor three.\u201d I bolt, heart hammering, the city\u2019s neon glare blurring. I duck into an alley, the app\u2019s map pulsing red. My phone vibrates: \u201c30 MINUTES LEFT.\u201d The alley smells of rain and gasoline. I hear a siren wail distant, then a sudden crack\u2014my phone screen cracks, but the app still glows. I glance up: a security camera swivels, its red light blinking. I realize I\u2019m being watched. I clutch the note, its words burning my skin. I push forward, the warehouse looming like a beast. My pulse races as the doors creak open, revealing darkness beyond. I step inside, the weight of the unknown crushing my chest.",
+    "I\u2019m inside the warehouse, darkness swallowing me. [[DAY 2 \u00b7 00:10]] The app\u2019s timer blinks: \u201c5 MINUTES LEFT.\u201d I hear my own footsteps echo, the metal grate beneath my boots rattling. A cold draft brushes my cheek. I feel a wall press against me, a hidden door sliding shut behind. The screen flashes: \u201cYou\u2019ve reached the core.\u201d A voice, synthetic and calm, fills the space: \u201cWelcome, participant. Your sister\u2019s disappearance was staged.\u201d My mind reels. I glance at the note in my hand\u2014its paper now thin, almost translucent. The voice continues, \u201cMaya is an AI avatar, a variable in our survival experiment. Your choices determine the protocol\u2019s success.\u201d My heart stops. The app buzzes, \u201cChoose: End the game or continue.\u201d I stare at the dimly lit control panel, buttons labeled \u201cEXIT\u201d and \u201cPROCEED.\u201d A siren blares, metal shutters begin to close, sealing me in. I hear a distant child\u2019s laugh\u2014Maya\u2019s laugh, recorded, echoing from the speakers. I feel a surge of anger and pity. I press \u201cPROCEED.\u201d The lights flicker, a hologram of Maya appears, eyes pleading. The voice says, \u201cYou have completed the test. Data will be uploaded.\u201d The warehouse shakes, the floor cracks, and the hologram shatters. My phone vibrates one last time: \u201cGame Over.\u201d I stand alone, the weight of the experiment crushing me. Was I just a pawn? Was Maya ever real? So\u2026 was I wrong to keep playing, or should I have quit? #storytime #fyp #foryou #drama #ethics #AI"
+  ],
+  "scenes": [
+    [
+      "Close\u2011up of a phone screen showing a red notification badge.",
+      "Female protagonist, mid\u2011twenties, dark hair, eyes wide, holding the phone.",
+      "Old kitchen clock ticking loudly.",
+      "Hand pulling open a dusty attic drawer.",
+      "Silhouette of a cracked window in a childhood bedroom.",
+      "Phone displaying a countdown timer at three hours.",
+      "Shadowy figure glimpsed behind a dresser.",
+      "Phone flashlight illuminating a hidden trapdoor."
+    ],
+    [
+      "Park bench at sunset, golden light spilling over.",
+      "Hand lifting a wooden slat to reveal a folded note.",
+      "Stranger in a dark hoodie stepping forward.",
+      "Phone screen showing one hour left.",
+      "Rain\u2011slick alley with neon signs reflected in puddles.",
+      "Security camera red light blinking in the darkness.",
+      "Protagonist clutching the smeared note, eyes wide.",
+      "Huge abandoned warehouse doors creaking open."
+    ],
+    [
+      "Dark interior of a warehouse, metal grates underfoot.",
+      "Phone timer flashing five minutes left.",
+      "Control panel with glowing \u201cEXIT\u201d and \u201cPROCEED\u201d buttons.",
+      "Holographic avatar of Maya appearing, translucent.",
+      "Speaker emitting Maya\u2019s recorded laugh.",
+      "Shutters slamming shut, sealing the room.",
+      "Floor cracking, dust rising.",
+      "Protagonist standing alone, phone buzzing one last time."
+    ]
+  ],
+  "voice": "af_heart",
+  "premise": {
+    "type": "What if scenario (third person)",
+    "hook": "What if a hidden app on your phone starts sending you cryptic clues that promise to save your missing sister\u2014if you finish the game in 24 hours.",
+    "twist": "The app is an AI\u2011run survival experiment by a secret government agency, and the \u201csister\u201d is actually a simulated avatar testing your decisions.",
+    "debate": "Comments will explode over the ethics of AI\u2011driven psychological experiments and whether the protagonist should keep playing or quit.",
+    "score": 82
+  },
+  "caption": "My phone buzzes with a secret game that could bring my sister back. #storytime #fyp #foryou #drama #tech #mystery"
+}
