@@ -96,19 +96,19 @@ float shadow(float bias){
 void main(){
   vec3 n = normalize(v_n);
   vec3 v = normalize(u_cam - v_w);
-  float mat = v_c.a;
+  float mat = floor(v_c.a + 0.001);
+  float seed = fract(v_c.a);
   vec3 alb = v_c.rgb, emis = vec3(0.0);
   if (mat > 0.5 && mat < 1.5) {                       // terrain block
     vec3 p = (v_l + 0.5) * v_sc;                       // position in block units inside this box
-    vec3 base = v_w - p;                               // box corner: constant per box
-    float nz = h3(floor(p - n * 0.01) + floor(base + 0.5));
+    float nz = h3(floor(p - n * 0.01) + seed * 97.0);
     vec3 sidec = mix(alb * 0.5, u_side, 0.6);
     float fromTop = (0.5 - v_l.y) * v_sc.y;
     if (n.y > 0.5) alb *= 0.9 + 0.18 * nz;
     else if (n.y < -0.5) alb = sidec * 0.65;
     else {
       float along = abs(n.x) > 0.5 ? p.z : p.x;
-      float jag = 0.16 + 0.12 * h2(vec2(floor(along * 3.0), floor(base.y)));
+      float jag = 0.16 + 0.12 * h2(vec2(floor(along * 3.0), seed * 53.0));
       alb = fromTop < jag ? alb * (0.88 + 0.12 * nz) : sidec * (0.85 + 0.25 * nz);
     }
     vec3 g = abs(fract(p - n * 0.01) - 0.5);
@@ -273,7 +273,11 @@ def smooth(a, b, t):
 
 # ---------------------------------------------------------------- course
 class Course:
-    """Surfaces the runner lands on, the time-based path across them, and all static blocks."""
+    """A winding obby: curves left and right, zig-zags, spiral tower climbs, drops and launch pads.
+
+    Each surface is an oriented box (center, heading). The runner runs along a surface's heading and
+    jumps between surfaces on parabolic arcs; all timing is precomputed so pose(t) is cheap.
+    """
 
     def __init__(self, rng, th, seconds):
         self.rng, self.th = rng, th
@@ -283,59 +287,106 @@ class Course:
         self.build_path()
         self.build_blocks()
 
-    def add(self, cx, ty, z0, length, w, kind):
-        self.surfs.append(dict(cx=float(cx), ty=float(ty), z0=z0, z1=z0 + length, w=w, kind=kind))
-        return z0 + length
+    @staticmethod
+    def fwd(h):
+        return np.array([math.sin(h), 0.0, math.cos(h)], "f4")
+
+    @staticmethod
+    def right(h):
+        return np.array([math.cos(h), 0.0, -math.sin(h)], "f4")
+
+    def add(self, center, h, length, w, kind):
+        s = dict(c=np.array(center, "f4"), h=h, L=length, w=w, kind=kind)
+        self.surfs.append(s)
+        return s
+
+    def edge(self, s):
+        """Point at the far edge of a surface, on its top."""
+        return s["c"] + self.fwd(s["h"]) * (s["L"] / 2)
+
+    def place(self, prev, gap, dh, dy, length, w, kind, lateral=0.0):
+        """Next surface after `prev`: jump `gap` along the bend, turn by dh, rise dy, shift sideways."""
+        h = prev["h"] + dh
+        hj = prev["h"] + dh / 2
+        c = self.edge(prev) + self.fwd(hj) * gap + self.fwd(h) * (length / 2) + self.right(h) * lateral
+        c[1] = max(-8.0, min(20.0, float(prev["c"][1]) + dy))
+        return self.add(c, h, length, w, kind)
 
     def build_surfaces(self, seconds):
         rng = self.rng
-        x, y, drift = 0.0, 0.0, 0.0
-        z = self.add(0, 0, -8, 14, 4, "start")
+        cur = self.add((0, 0, 0), 0.0, 14, 4, "start")
         est, since_cp = 0.0, 0
+        bend, bend_left = 0.0, 0          # current curve: heading change per surface, surfaces remaining
+        base_h = 0.0                      # the course's overall direction; curves swing around it
         while est < seconds:
-            drift = max(-1.6, min(1.6, drift + rng.uniform(-0.7, 0.7)))
-            x = max(-10, min(10, x + drift))
-            r = rng.random()
+            y = float(cur["c"][1])
+            if bend_left <= 0:
+                target = base_h + rng.uniform(-1.6, 1.6)
+                diff = math.atan2(math.sin(target - cur["h"]), math.cos(target - cur["h"]))
+                bend_left = rng.randint(3, 6)
+                bend = diff / bend_left
             since_cp += 1
+            weights = dict(spiral=0.08, zig=0.13, drop=0.08, pad=0.11, beam=0.1, stairs=0.09, hops=0.11, normal=0.3)
+            if y > 9:                     # high up: favour ways down
+                weights.update(spiral=0.0, stairs=0.0, drop=0.3, pad=0.2)
+            elif y < -2:                  # low: favour climbs
+                weights.update(drop=0.0, spiral=0.16, stairs=0.18)
+            sec = rng.choices(list(weights), list(weights.values()))[0]
             if since_cp >= 14:
                 since_cp = 0
-                z = self.add(round(x), y, z + rng.uniform(2.2, 3.0), 7, 5, "checkpoint"); est += 1.5
-            elif r < 0.14:                                   # hop blocks
+                cur = self.place(cur, rng.uniform(2.2, 3.0), bend, 0, 7, 5, "checkpoint"); est += 1.5
+            elif sec == "spiral":         # spiral tower climb: one full loop of hop blocks going up
+                d = rng.choice([-1, 1])
+                n = 10
+                for _ in range(n):
+                    cur = self.place(cur, 1.25, d * 2 * math.pi / n, 0.8, 1.4, 1.4, "spiral"); est += 0.5
+                cur = self.place(cur, 2.2, 0.0, 0, 5, 3, "normal"); est += 1.0
+            elif sec == "zig":            # zig-zag: diagonal jumps left and right
+                side = rng.choice([-1, 1])
+                for _ in range(rng.randint(4, 6)):
+                    cur = self.place(cur, 1.6, bend * 0.3, rng.choice([0, 0, 1, -1]), 1.6, 1.6, "zig", lateral=side * 2.4)
+                    side = -side; est += 0.6
+            elif sec == "drop":           # big drop down
+                cur = self.place(cur, rng.uniform(2.5, 3.5), bend, -rng.uniform(3.5, 6.0), rng.uniform(5, 7), 4, "land"); est += 1.4
+            elif sec == "pad":            # jump pad -> super jump up or down, with a sharp turn
+                cur = self.place(cur, rng.uniform(2.0, 3.0), bend, 0, rng.uniform(4, 6), 3, "pad"); est += 0.9
+                dy = rng.choice([-6, -4, -3] if y > 6 else ([3, 5, 7] if y < 0 else [-4, -3, 3, 5]))
+                cur = self.place(cur, rng.uniform(9.0, 12.0), rng.uniform(-0.9, 0.9), dy, rng.uniform(5, 7), 4, "land"); est += 2.2
+            elif sec == "beam":           # balance beam on a curve
+                cur = self.place(cur, rng.uniform(2.0, 3.0), bend, rng.choice([0, 1]), rng.uniform(6, 9), 0.7, "beam"); est += 1.4
+            elif sec == "stairs":         # stairs up, curving
                 for _ in range(rng.randint(3, 5)):
-                    x = max(-10, min(10, x + rng.uniform(-1.4, 1.4)))
-                    z = self.add(round(x), y, z + rng.uniform(1.6, 2.3), 1, 1, "hop"); est += 0.5
-            elif r < 0.26:                                   # balance beam
-                z = self.add(round(x), y, z + rng.uniform(2.0, 3.0), rng.uniform(6, 10), 0.7, "beam"); est += 1.5
-            elif r < 0.38:                                   # jump pad -> super jump
-                z = self.add(round(x), y, z + rng.uniform(2.0, 3.0), rng.uniform(4, 6), 3, "pad"); est += 1.0
-                y = max(-6, min(9, y + rng.choice([-3, -2, 0, 2, 3])))
-                x = max(-10, min(10, x + rng.uniform(-3, 3)))
-                z = self.add(round(x), y, z + rng.uniform(9.5, 13), rng.uniform(5, 7), 4, "land"); est += 2.2
-            elif r < 0.48:                                   # stairs up
-                for _ in range(rng.randint(3, 4)):
-                    y = min(9, y + 1)
-                    z = self.add(round(x), y, z + rng.uniform(1.1, 1.5), 1.6, 2, "stair"); est += 0.45
-            else:                                            # normal platform
-                y = max(-6, min(9, y + rng.choice([-1, 0, 0, 1])))
-                w = rng.choice([2, 3, 3, 4])
-                z = self.add(round(x), y, z + rng.uniform(2.2, 3.4), rng.uniform(3, 7), w, "normal"); est += 1.1
+                    cur = self.place(cur, 1.2, bend * 0.5, 1.0, 1.6, 2, "stair"); est += 0.45
+            elif sec == "hops":           # hop blocks
+                for _ in range(rng.randint(3, 5)):
+                    cur = self.place(cur, rng.uniform(1.6, 2.3), bend * 0.5 + rng.uniform(-0.35, 0.35), rng.choice([0, 0, 1, -1, -1]),
+                                     1, 1, "hop", lateral=rng.uniform(-0.8, 0.8)); est += 0.5
+            else:                         # normal platform
+                cur = self.place(cur, rng.uniform(2.2, 3.2), bend, rng.choice([-2, -1, 0, 0, 1, 2]), rng.uniform(3, 7),
+                                 rng.choice([2, 3, 3, 4]), "normal"); est += 1.1
+            bend_left -= 1
+            if rng.random() < 0.08:       # slowly change the overall direction too
+                base_h += rng.uniform(-0.8, 0.8)
 
     def build_path(self):
         rng, t, prev = self.rng, 0.0, None
-        for i, s in enumerate(self.surfs):
-            a = np.array([s["cx"], s["ty"], s["z0"] + 0.35], "f4")
-            b = np.array([s["cx"], s["ty"], s["z1"] - 0.35], "f4")
+        for s in self.surfs:
+            f = self.fwd(s["h"])
+            half = max(0.0, s["L"] / 2 - 0.35)
+            a, b = s["c"] - f * half, s["c"] + f * half
             if prev is not None:
                 d = a - prev[0]
-                horiz = math.hypot(d[0], d[2])
+                horiz = math.hypot(float(d[0]), float(d[2]))
                 if prev[1] == "pad":
                     h, dur, kind = 5.5 + 0.12 * horiz + max(0.0, float(d[1])), 1.3 + 0.02 * horiz, "super"
                 else:
                     h, dur, kind = 0.8 + 0.2 * horiz + max(0.0, float(d[1])), max(0.42, horiz / (SPEED * 1.08) + 0.12), "jump"
+                    if d[1] < -2:         # big drops take a little longer and arc less
+                        h, dur = 0.9, dur + 0.25
                 self.segs.append(dict(kind=kind, t0=t, dur=dur, a=prev[0], b=a, h=h))
                 apex = (prev[0] + a) / 2 + np.array([0, h, 0], "f4")
                 if kind == "super":
-                    self.rings.append((apex + np.array([0, 1.0, 0], "f4"), math.atan2(d[0], d[2])))
+                    self.rings.append((apex + np.array([0, 1.0, 0], "f4"), math.atan2(float(d[0]), float(d[2]))))
                 elif horiz > 2.4 and rng.random() < 0.3:
                     self.gems.append(apex + np.array([0, 1.0, 0], "f4"))
                 t += dur
@@ -344,9 +395,10 @@ class Course:
             if s["kind"] == "checkpoint":
                 self.checkpoints.append(t + (L / 2) / SPEED)
             if s["kind"] in ("normal", "land", "beam", "checkpoint") and L > 3 and rng.random() < 0.65:
-                zc = (a[2] + b[2]) / 2
                 for k in (-1.3, 0, 1.3):
-                    self.gems.append(np.array([s["cx"], s["ty"] + 1.0, zc + k], "f4"))
+                    self.gems.append(s["c"] + f * k + np.array([0, 1.0, 0], "f4"))
+            if s["kind"] in ("spiral", "zig") and rng.random() < 0.5:
+                self.gems.append(s["c"] + np.array([0, 1.0, 0], "f4"))
             t += max(L / SPEED, 0.04)
             prev = (b, s["kind"])
         self.total = t
@@ -362,59 +414,72 @@ class Course:
             p = p + np.array([0, sg["h"] * 4 * s * (1 - s), 0], "f4")
         return p, sg, s, i
 
+    def clear_of_course(self, p, dist):
+        p = np.asarray(p, "f4")
+        return all(float(np.sum((s["c"][[0, 2]] - p[[0, 2]]) ** 2)) > dist * dist or abs(float(s["c"][1] - p[1])) > dist
+                   for s in self.surfs)
+
     def build_blocks(self):
         rng, th, B = self.rng, self.th, self.blocks
         tops = th["tops"]
+        seed = lambda: rng.uniform(0.0, 0.9)
         for i, s in enumerate(self.surfs):
-            cx, ty, z0, z1, w, k = s["cx"], s["ty"], s["z0"], s["z1"], s["w"], s["kind"]
-            zc, L = (z0 + z1) / 2, z1 - z0
+            c, h, L, w, k = s["c"], s["h"], s["L"], s["w"], s["kind"]
+            M0 = T(*c) @ RY(h)
             top = tops[0] if k in ("start", "land", "checkpoint") and th.get("trees") else rng.choice(tops)
             if k == "beam":
-                B.append((box(cx, ty - 0.3, zc, w, 0.6, L), (0.72, 0.52, 0.32, 1)))
-                for zz in (z0 + 0.3, z1 - 0.3):
-                    B.append((box(cx, ty - 2.2, zz, 0.5, 3.4, 0.5), (*th["side"], 1)))
+                B.append((M0 @ box(0, -0.3, 0, w, 0.6, L), (0.72, 0.52, 0.32, 1 + seed())))
+                for zz in (-L / 2 + 0.3, L / 2 - 0.3):
+                    B.append((M0 @ box(0, -2.2, zz, 0.5, 3.4, 0.5), (*th["side"], 1 + seed())))
                 continue
-            thick = 2.0 if k in ("start", "checkpoint", "land") else (0.8 if k == "hop" else 1.0)
-            B.append((box(cx, ty - thick / 2, zc, w, thick, L), (*top, 1)))
-            if k not in ("hop", "stair") and rng.random() < 0.35:     # pillar down to the sea
-                ph = ty - thick - SEA_Y + 2
-                B.append((box(cx, ty - thick - ph / 2, zc, min(w, 1.5), ph, min(L, 1.5)), (*th["side"], 1)))
+            thick = 2.0 if k in ("start", "checkpoint", "land") else (0.8 if k in ("hop", "zig", "spiral") else 1.0)
+            B.append((M0 @ box(0, -thick / 2, 0, w, thick, L), (*top, 1 + seed())))
+            if (k == "spiral" and i % 2 == 0) or (k not in ("hop", "stair", "zig", "spiral") and rng.random() < 0.35):
+                ph = float(c[1]) - thick - SEA_Y + 2
+                pw = 0.6 if k == "spiral" else min(w, 1.5)
+                B.append((M0 @ box(0, -thick - ph / 2, 0, pw, ph, min(L, pw)), (*th["side"], 1 + seed())))
             if k == "pad":
-                B.append((box(cx, ty + 0.07, z1 - 0.9, 1.6, 0.14, 1.3), (0.15, 0.95, 1.0, 2)))
+                B.append((M0 @ box(0, 0.07, L / 2 - 0.9, 1.6, 0.14, 1.3), (0.15, 0.95, 1.0, 2)))
                 for j in range(3):
-                    B.append((box(cx, ty + 0.16, z1 - 1.3 + j * 0.4, 0.5, 0.06, 0.16), (1, 1, 1, 2)))
+                    B.append((M0 @ box(0, 0.16, L / 2 - 1.3 + j * 0.4, 0.5, 0.06, 0.16), (1, 1, 1, 2)))
             if k == "checkpoint":
                 for sx in (-1, 1):
-                    B.append((box(cx + sx * (w / 2 - 0.35), ty + 2.3, zc, 0.5, 4.6, 0.5), (0.95, 0.95, 0.98, 0)))
-                    B.append((box(cx + sx * (w / 2 - 0.35), ty + 5.4, zc, 0.12, 1.4, 0.12), (0.3, 0.3, 0.3, 0)))
-                    B.append((box(cx + sx * (w / 2 - 0.35) + 0.4, ty + 5.85, zc, 0.7, 0.45, 0.06), (0.2, 0.95, 0.4, 2)))
-                B.append((box(cx, ty + 4.75, zc, w, 0.5, 0.5), (0.95, 0.95, 0.98, 0)))
-                B.append((box(cx, ty + 4.42, zc, w - 0.8, 0.16, 0.3), (0.2, 0.95, 0.4, 2)))
-            # floating scenery islands
-            for _ in range(2 if rng.random() < 0.7 else 0):
+                    x = sx * (w / 2 - 0.35)
+                    B.append((M0 @ box(x, 2.3, 0, 0.5, 4.6, 0.5), (0.95, 0.95, 0.98, 0)))
+                    B.append((M0 @ box(x, 5.4, 0, 0.12, 1.4, 0.12), (0.3, 0.3, 0.3, 0)))
+                    B.append((M0 @ box(x + 0.4, 5.85, 0, 0.7, 0.45, 0.06), (0.2, 0.95, 0.4, 2)))
+                B.append((M0 @ box(0, 4.75, 0, w, 0.5, 0.5), (0.95, 0.95, 0.98, 0)))
+                B.append((M0 @ box(0, 4.42, 0, w - 0.8, 0.16, 0.3), (0.2, 0.95, 0.4, 2)))
+        # floating scenery islands, kept clear of the course
+        for s in self.surfs[::2]:
+            for _ in range(2):
+                if rng.random() > 0.75:
+                    continue
                 side = rng.choice([-1, 1])
-                ix, iy, iz = cx + side * rng.uniform(13, 34), ty + rng.uniform(-9, 3), zc + rng.uniform(-6, 6)
-                sw, sd, sh = rng.uniform(3, 8), rng.uniform(3, 8), rng.uniform(2, 4)
-                B.append((box(ix, iy - sh / 2, iz, round(sw), sh, round(sd)), (*rng.choice(tops), 1)))
-                B.append((box(ix, iy - sh - 1.2, iz, round(sw) - 2, 2.4, round(sd) - 2), (*th["side"], 1)))
-                if th.get("trees"):
-                    for _ in range(rng.randint(1, 2)):
-                        self.tree(ix + rng.uniform(-sw / 3, sw / 3), iy, iz + rng.uniform(-sd / 3, sd / 3), rng.uniform(0.9, 1.4))
-                else:
-                    for _ in range(rng.randint(1, 3)):
+                p = s["c"] + self.right(s["h"]) * side * rng.uniform(14, 34) + self.fwd(s["h"]) * rng.uniform(-6, 6)
+                p[1] += rng.uniform(-9, 3)
+                if not self.clear_of_course(p, 10):
+                    continue
+                sw, sd, sh = round(rng.uniform(3, 8)), round(rng.uniform(3, 8)), rng.uniform(2, 4)
+                Mi = T(*p) @ RY(rng.uniform(0, 3.14))
+                B.append((Mi @ box(0, -sh / 2, 0, sw, sh, sd), (*rng.choice(tops), 1 + seed())))
+                B.append((Mi @ box(0, -sh - 1.2, 0, max(1, sw - 2), 2.4, max(1, sd - 2)), (*th["side"], 1 + seed())))
+                for _ in range(rng.randint(1, 3)):
+                    q = Mi @ np.array([rng.uniform(-sw / 3, sw / 3), 0, rng.uniform(-sd / 3, sd / 3), 1], "f4")
+                    if th.get("trees"):
+                        self.tree(q[0], q[1], q[2], rng.uniform(0.9, 1.4))
+                    else:
                         hh = rng.uniform(1.5, 4)
-                        B.append((box(ix + rng.uniform(-sw / 3, sw / 3), iy + hh / 2, iz + rng.uniform(-sd / 3, sd / 3), 0.5, hh, 0.5),
-                                  (*th["leaf"], 2)))
+                        B.append((box(q[0], q[1] + hh / 2, q[2], 0.5, hh, 0.5), (*th["leaf"], 2)))
         # far-away towers for a skyline
-        zmax = self.surfs[-1]["z1"]
-        z = -20.0
-        while z < zmax + 80:
+        for s in self.surfs[::5]:
             for side in (-1, 1):
                 if rng.random() < 0.6:
-                    wd = rng.uniform(8, 18); hh = rng.uniform(25, 70)
-                    B.append((box(side * rng.uniform(55, 120), SEA_Y + hh / 2 - 2, z + rng.uniform(-10, 10), wd, hh, wd),
-                              (*rng.choice(tops), 1)))
-            z += rng.uniform(25, 40)
+                    p = s["c"] + self.right(s["h"]) * side * rng.uniform(55, 120)
+                    if not self.clear_of_course(p, 30):
+                        continue
+                    wd, hh = rng.uniform(8, 18), rng.uniform(25, 70)
+                    B.append((box(p[0], SEA_Y + hh / 2 - 2, p[2], wd, hh, wd), (*rng.choice(tops), 1 + seed())))
         for c, yaw in self.rings:                           # gold rings on super jumps
             for j in range(16):
                 a = j / 16 * 2 * math.pi
@@ -422,10 +487,11 @@ class Course:
                 B.append((M, (1.0, 0.8, 0.15, 2)))
 
     def tree(self, x, y, z, k):
-        th, B = self.th, self.blocks
+        th, B, rng = self.th, self.blocks, self.rng
         B.append((box(x, y + 1.1 * k, z, 0.5 * k, 2.2 * k, 0.5 * k), (0.45, 0.3, 0.18, 0)))
-        B.append((box(x, y + 2.9 * k, z, 2.2 * k, 1.8 * k, 2.2 * k), (*th["leaf"], 1)))
-        B.append((box(x, y + 4.0 * k, z, 1.3 * k, 0.9 * k, 1.3 * k), (*np.clip(np.array(th["leaf"]) * 1.15, 0, 1), 1)))
+        B.append((box(x, y + 2.9 * k, z, 2.2 * k, 1.8 * k, 2.2 * k), (*th["leaf"], 1 + rng.uniform(0, 0.9))))
+        B.append((box(x, y + 4.0 * k, z, 1.3 * k, 0.9 * k, 1.3 * k),
+                  (*np.clip(np.array(th["leaf"]) * 1.15, 0, 1), 1 + rng.uniform(0, 0.9))))
 
 
 # ---------------------------------------------------------------- particles
@@ -564,7 +630,7 @@ def render(out, seconds, seed=None, theme=None):
         kind = sg["kind"]
         d = sg["b"] - sg["a"]
         yaw = math.atan2(float(d[0]), float(d[2])) if abs(d[0]) + abs(d[2]) > 1e-3 else yaw_s
-        yaw_s += (yaw - yaw_s) * 0.3
+        yaw_s += math.atan2(math.sin(yaw - yaw_s), math.cos(yaw - yaw_s)) * 0.3
 
         # events: take-off, landing
         if kind != last_kind:
@@ -634,16 +700,17 @@ def render(out, seconds, seed=None, theme=None):
         ahead, _, _, _ = course.pose(t + 0.7, hint)
         dv = ahead - p
         if abs(dv[0]) + abs(dv[2]) > 0.3:
-            heading += (math.atan2(float(dv[0]), float(dv[2])) * 0.6 - heading) * 0.04
+            want_h = math.atan2(float(dv[0]), float(dv[2]))
+            heading += math.atan2(math.sin(want_h - heading), math.cos(want_h - heading)) * 0.05
         sup_s += ((1.0 if kind == "super" else 0.0) - sup_s) * 0.06
         fwd = np.array([math.sin(heading), 0, math.cos(heading)], "f4")
         right = np.array([math.cos(heading), 0, -math.sin(heading)], "f4")
         lateral = 1.6 * math.sin(t * 0.23) + 0.8 * math.sin(t * 0.07 + 1.3)
-        back, up = 6.4 + 2.2 * sup_s, 3.4 - 1.2 * sup_s
+        back, up = 6.4 + 2.4 * sup_s, 3.4 + 0.4 * sup_s
         want = p + right * lateral * (1 + 0.8 * sup_s) - fwd * back + np.array([0, up, 0], "f4")
         look = p + np.array([0, 2.3 + 0.6 * sup_s, 0], "f4") + fwd * 4.2
-        cam = want if cam is None else cam + (want - cam) * np.array([0.12, 0.07, 0.12], "f4")
-        tgt = look if tgt is None else tgt + (look - tgt) * 0.2
+        cam = want if cam is None else cam + (want - cam) * np.array([0.12, 0.1 + 0.08 * sup_s, 0.12], "f4")
+        tgt = look if tgt is None else tgt + (look - tgt) * (0.2 + 0.15 * sup_s)
         shake *= math.exp(-10 * dt)
         jitter = np.array([rng.uniform(-1, 1), rng.uniform(-1, 1), 0], "f4") * shake
         view = look_at(cam + jitter, tgt + jitter * 0.5)
@@ -652,7 +719,7 @@ def render(out, seconds, seed=None, theme=None):
         vp = proj @ view
 
         # shadow pass
-        lc = p + fwd * 12
+        lc = p + fwd * 10
         lvp = ortho(44, 1, 220) @ look_at(lc + sun * 100, lc)
         ctx.enable(moderngl.DEPTH_TEST | moderngl.CULL_FACE)
         shadow_fbo.use(); shadow_fbo.clear(depth=1.0)
