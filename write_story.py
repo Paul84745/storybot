@@ -248,7 +248,7 @@ def main(out):
     hist = json.load(open(HIST)) if os.path.exists(HIST) else []
     prem = pick_premise(hist)
     story = None
-    need = 4 if is_whatif(prem.get("type")) else 2
+    need = 4 if is_whatif(prem.get("type")) else 1
     extra = WHATIF_WRITE if is_whatif(prem.get("type")) else ""
     fallback = None
     for attempt in range(5):
