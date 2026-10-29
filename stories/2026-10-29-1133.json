@@ -1,0 +1,56 @@
+{
+  "title": "Do Not Open Before 8\u202fPM?",
+  "type": "Suspense thriller",
+  "narrator": "female",
+  "captions": [
+    "The courier hands me a sealed envelope. What could be inside? #storytime #fyp #foryou #drama #mystery #thriller",
+    "My heart races as the clock ticks. Do I open it or stay hidden? #storytime #fyp #foryou #drama #tension #whatif",
+    "Live\u2011feed shows my own apartment being robbed. Who am I trusting? Verdict? #storytime #fyp #foryou #drama #twist #comment"
+  ],
+  "parts": [
+    "[[9:45 PM \u00b7 APARTMENT]] The courier handed me a sealed envelope labeled \u2018Do not open before eight\u202fPM.\u2019 I stare at it, pulse thudding. [[RULE 1 \u00b7 TRUST NO ONE]] My roommate is out, the hallway empty, the city lights flickering outside. I slip the envelope onto the kitchen counter, eyes glued to the digital clock. It reads seven fifty\u2011nine. One minute. [[3 MINUTES LEFT]] I hear a distant siren, then a soft click as the front door locks itself. My phone buzzes. Unknown number. \u201cDon\u2019t open.\u201d A chill runs down my spine. I grip the edge of the counter, fingers white. The ticking feels louder, each second a hammer. I glance at the hallway\u2014nothing moves. My mind races: Is this a prank? A warning? I swallow, breath shallow. The envelope trembles in my hand, as if alive. I set it down, stare at the clock\u2014seven fifty\u2011nine. I hear my own breath, the faint hum of the refrigerator. Suddenly, the power flickers, the lights dim, and a soft thud echoes from the living room. I freeze. [[TIME CRUNCH]] My heart pounds, the second hand ticks to eight. I can\u2019t decide\u2014open it now and face whatever\u2019s inside, or wait and hope the warning saves me. I reach for the envelope as the clock strikes eight. Then\u2014",
+    "The clock strikes eight. I\u2019m staring at the envelope, my hands trembling. My apartment feels colder, as if the walls themselves are holding their breath. I lift the flap, and a thin strip of paper slides out, revealing a small USB drive glued to the inside. [[RULE 2 \u00b7 OPEN OR NOT]] I hear a muffled crash from the bedroom, like a cupboard being tipped over. I drop the envelope, grab the drive, and stare at the dark screen of my phone, trying to decide whether to plug it in. My mind flashes: if I open, I might see who\u2019s after me. If I stay hidden, I might miss the chance to stop them. I hear footsteps on the stairs\u2014slow, deliberate. The hallway light flickers again, casting long shadows that crawl across the floor. I bite my lip, the taste of metal sharp. I pull out a spare charger, plug the drive into my laptop, and the screen lights up with a live\u2011feed video. My breath catches. The camera shows my own living room, but\u2026 [[COUNTDOWN 2 MINUTES]] I\u2019m watching myself from the future, a version of me crouched behind the couch, eyes wide, whispering, \u201cDon\u2019t open\u2014\u201d The future me points at the kitchen window, where a silhouette looms. I gasp, heart racing, as the feed glitches. I\u2019m about to\u2014",
+    "My future self points at the kitchen window, where a dark silhouette pauses, then steps back into the shadows. I watch my own hands tremble, the same envelope still clutched in my present\u2011time grip. The live\u2011feed flickers, showing a second camera angle: the front door, ajar, a glint of a knife on the floor. My future self whispers, \u201cThey\u2019re already inside. You have to trust me.\u201d I feel the room spin, the clock ticking louder than ever\u2014[[TIME 9:02 PM \u00b7 LIVING ROOM]] My phone vibrates again, this time a text from an unknown number: \u201cYou opened it. Now you\u2019re part of it.\u201d I glance at the window; the silhouette is gone, but a cold draft sweeps in, rattling the blinds. I hear a soft creak behind the couch\u2014my future self\u2019s breath, ragged. I realize the envelope was never a warning; it was a trap to lure me into watching my own fate. The feed cuts to black, then a final frame: my own face, eyes wide, staring directly at the camera, a single tear rolling down. I\u2019m left with a choice\u2014stay hidden, hope the future self\u2019s warning saved me, or dive deeper, open every door to find the truth. The clock now reads nine ten, the seconds slipping away. I stare at the envelope, the USB, the empty window. The decision feels like a razor\u2019s edge. I turn to the camera, voice shaking, \u201cDo I trust the warning, or risk everything to find out who\u2019s behind the future intrusion?\u201d So\u2026 what do you think? Was I right to open it, or should I have stayed hidden? #storytime #fyp #foryou #drama #twist #comment"
+  ],
+  "scenes": [
+    [
+      "Courier in a black jacket handing a sealed envelope to a woman in a hoodie",
+      "Close\u2011up of the envelope label \u2018Do not open before 8\u202fPM\u2019",
+      "Digital clock on a kitchen wall showing 7:59 PM",
+      "Woman gripping the counter edge, eyes wide",
+      "Empty hallway with dim hallway light",
+      "Phone buzzing with unknown number on screen",
+      "Power flicker, lights dimming",
+      "Woman reaching for the envelope as the clock ticks to 8"
+    ],
+    [
+      "Envelope on kitchen counter, woman lifting the flap",
+      "Thin paper strip with a USB drive attached inside",
+      "Bedroom door slightly ajar, a cupboard tipped over",
+      "Footsteps on stairs, silhouette barely visible",
+      "Woman plugging USB into laptop, screen lighting up",
+      "Live\u2011feed video showing her own living room from a future angle",
+      "Future version of herself crouched behind couch, whispering",
+      "Window view showing a dark silhouette outside"
+    ],
+    [
+      "Future self pointing at kitchen window, silhouette pausing",
+      "Front door ajar with a glint of a knife on floor",
+      "Phone vibrating with ominous text message",
+      "Cold draft moving blinds, curtains fluttering",
+      "Couch area, future self\u2019s breath visible in cold air",
+      "Screen cutting to black, then final frame of present self\u2019s face",
+      "Woman staring at empty window, envelope in hand",
+      "Close\u2011up of clock reading 9:10 PM, seconds ticking"
+    ]
+  ],
+  "voice": "bf_emma",
+  "premise": {
+    "type": "Suspense thriller",
+    "hook": "The courier handed me a sealed envelope labeled \u2018Do not open before 8\u202fPM.\u2019",
+    "twist": "Inside was a live\u2011feed video of my apartment being broken into in real time\u2014my own future self is watching.",
+    "debate": "Do I trust the warning and stay hidden, or risk opening it to find out who\u2019s behind the future intrusion?",
+    "score": 90
+  },
+  "caption": "The courier hands me a sealed envelope. What could be inside? #storytime #fyp #foryou #drama #mystery #thriller"
+}
