@@ -1,0 +1,56 @@
+{
+  "title": "Did I Just Set the Office On Fire?",
+  "type": "Malicious compliance",
+  "narrator": "female",
+  "captions": [
+    "My boss said, \u2018No one leaves until the report is finished,\u2019 so I locked the door and set the fire alarm. #storytime #fyp #foryou #drama #office #compliance",
+    "The alarms blare. Everyone\u2019s panicking. I\u2019m holding my breath for the truth to surface. #storytime #fyp #foryou #drama #tension #whistleblower",
+    "The evacuation reveals the boss\u2019s secret. Heroic whistleblowing or reckless sabotage? You decide. #storytime #fyp #foryou #drama #verdict #debate"
+  ],
+  "parts": [
+    "[[9:57 AM \u00b7 OPEN OFFICE]] I press the red button and the alarm screams. Everyone jumps. \u201cWhat the\u2014?\u201d someone hisses. The office lights flicker, red strobes pulse. My boss glares, \u201cNo one leaves until the report is finished.\u201d I stare at the blinking cursor, heart pounding. [[RULE 1 \u00b7 COMPLY]] I nod, smile, grab the key from my drawer. The hallway hums with coffee machines and frantic keyboards. [[3 MINUTES LEFT]] My pulse thuds; the deadline ticks down. I slip the key into the lock, turn it\u2014click. The door slams shut behind me. [[RULE 2 \u00b7 FIRE ALARM]] I race to the wall panel, slam the red button again. The shrill wail erupts louder. Red lights flood the ceiling. Sweat drips into my eyes. The PA crackles, \u201cEvacuate immediately.\u201d [[COUNTDOWN 2 MINUTES]] Fire doors thunder shut, sealing the floor. A colleague shoves past, breath ragged, \u201cDid you\u2026?\u201d I shrug, eyes locked on the server room door, still bolted. The sprinklers sputter, a cold mist coating the carpet. A sharp ozone scent mixes with stale coffee. A muffled thump echoes from the server room. I bite my lip, waiting. The hallway lights flicker again, shadows dancing. My hand clamps the fire alarm button, fingers white. A second, then\u2014",
+    "[[RECOVERY \u00b7 HALLWAY]]\nThe fire alarm blares, the server room is still open, and I have only minutes before the whole building collapses.\nThe office erupts in shouting, flashing lights, faces twisted in panic. I stand silent, watching the exit doors swing wide. Coworkers flood out, clutching bags, phones, trembling papers.\n[[RULE 3 \u00b7 SILENCE]] My mouth stays shut, fingers still on the alarm. The security guard roars, \u201cEveryone stay together!\u201d The crowd huddles, breathing hard, eyes glued to the locked server room. The smell of melting plastic thickens.\nI glance at the wall clock\u2014seven minutes past the deadline, the alarm still screams.\n[[5 MINUTES LEFT]] A junior analyst whispers, \u201cDid you set this off on purpose?\u201d I lock eyes with him, jaw tight. \u201cJust following orders,\u201d I reply, flat.\nHe swallows, glancing at the server door, now slightly ajar from the heat. A faint orange glow leaks out, illuminating rows of humming drives.\nThe guard\u2019s radio crackles, \u201cBreach in server room. Possible data loss.\u201d Tension spikes. Sprinklers hiss louder, water pooling at my shoes. A cold draft seeps from the doorway, as if something unseen is breathing.\nSuddenly, metal tears\u2014shelf collapses with a deafening crash. The alarm\u2019s shriek climbs.\nMy pulse pounds. A distant siren wails, growing nearer. The building shudders.\nI hold my breath, waiting for the next move.\n[[END PART 2]]",
+    "[[EVACUATION \u00b7 LOBBY]] The building\u2019s lobby erupts into a frenzy of police, fire trucks, and flashing lights. My coworkers cluster, eyes glued to the server room\u2019s cracked door. The guard yells, \u201cSecure the area!\u201d I step forward, the fire alarm still blaring in my ears. [[RULE 4 \u00b7 REVEAL]] The door bursts open, and a fireman pulls out a metal box, spilling papers onto the floor. Among them, a ledger\u2014numbers, signatures, and a red stamp: \u201cEMBEZZLED.\u201d The boss\u2019s name is at the top, underlined in ink. The crowd gasps. My heart pounds. The fire alarm finally stops, a low hum fading. I watch as the fire brigade seals the server room, sealing away the evidence. The police handcuff my boss, his face pale, eyes darting at the ledger. I feel a wave of relief, then a flicker of doubt. A coworker grips my arm, \u201cYou could\u2019ve killed us.\u201d I swallow, \u201cI followed his exact words.\u201d The sirens wail louder, the night air cold against my skin. The building\u2019s lights dim, the emergency exit signs blinking. I stand alone, the weight of what I did settling like dust. The debate burns inside me\u2014heroic whistleblowing or reckless sabotage? I glance at the ledger one last time, the truth laid bare. The camera zooms on my face, eyes searching. \u201cSo\u2026 was I wrong?\u201d [[END PART 3]]"
+  ],
+  "scenes": [
+    [
+      "Female narrator in a sleek office, brown hair in a ponytail, typing.",
+      "Boss, mid\u2011forties, sharp suit, pointing at a deadline clock.",
+      "Close\u2011up of a key turning in the office door lock.",
+      "Hand pressing the red fire alarm button.",
+      "Red alarm lights flashing across the office.",
+      "Coworkers turning heads, shocked expressions.",
+      "Fire doors sliding shut, sealing the room.",
+      "Mist of sprinklers beginning to fall."
+    ],
+    [
+      "Crowded hallway, people rushing toward exits, panic on faces.",
+      "Security guard shouting, megaphone in hand.",
+      "Junior analyst whispering, nervous eyes.",
+      "Server room door slightly ajar, faint blue glow.",
+      "Clock on wall showing minutes ticking down.",
+      "Water pooling on floor, shoes splashing.",
+      "Shelf collapsing with a loud crash.",
+      "Fire alarm button still pressed, hand trembling."
+    ],
+    [
+      "Lobby with police cars, fire trucks, flashing lights.",
+      "Firefighter pulling a metal box, papers spilling.",
+      "Ledger on floor with bold red \u201cEMBEZZLED\u201d stamp.",
+      "Boss in handcuffs, pale face, looking shocked.",
+      "Police officer reading the ledger, nodding.",
+      "Narrator standing alone, eyes wide, breath visible.",
+      "Emergency exit signs blinking red.",
+      "Close\u2011up of narrator\u2019s face, questioning look."
+    ]
+  ],
+  "voice": "am_michael",
+  "premise": {
+    "type": "Malicious compliance",
+    "hook": "My boss said, \u2018No one leaves until the report is finished,\u2019 so I locked the office door and set the fire alarm.",
+    "twist": "The fire alarm triggers a building-wide evacuation, exposing the boss\u2019s embezzlement hidden in the locked server room.",
+    "debate": "Was the narrator\u2019s extreme compliance heroic whistleblowing or dangerous sabotage that endangered coworkers?",
+    "score": 81
+  },
+  "caption": "My boss said, \u2018No one leaves until the report is finished,\u2019 so I locked the door and set the fire alarm. #storytime #fyp #foryou #drama #office #compliance"
+}
