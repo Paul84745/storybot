@@ -1,0 +1,56 @@
+{
+  "title": "What if the city blacks out nightly?",
+  "type": "What if scenario (third person)",
+  "narrator": "female",
+  "captions": [
+    "The city loses power at 11:59\u202fPM. A kid knows why. #storytime #fyp #foryou #drama #mystery #nightmare",
+    "Day by day the darkness deepens. Who\u2019s watching? #storytime #fyp #foryou #drama #suspense #conspiracy",
+    "The truth could cost a child\u2019s life. What would you do? #storytime #fyp #foryou #drama #ethics #vote"
+  ],
+  "parts": [
+    "[[DAY 1 \u00b7 00:00]] What if the city\u2019s power grid shuts down every night at exactly 11:59\u202fPM, and the only one who knows why is a kid who can\u2019t remember his own name? [[RULE 1 \u00b7 STAY IN SHADOWS]] Maya watches the streetlights flicker out, her breath fogging the cold air. She pulls her hoodie tighter, feeling the hum of hidden transmitters pulse through the pavement. [[RULE 2 \u00b7 KEEP QUIET]] A low drone buzzes overhead, its red eye scanning the empty avenues. She ducks behind a dumpster, heart hammering like a drum. [[9:58\u202fPM \u00b7 ROOFTOP]] The clock on the nearest tower blinks red, counting down. In the distance a siren wails, but it\u2019s not an alarm\u2014it\u2019s a signal. She hears a crackle on an old radio, a voice whispering, \u201cYou\u2019re the key, child.\u201d [[3 MINUTES LEFT]] Panic spikes. Maya clutches a broken flash drive she found in a trash bin, its surface etched with a symbol she can\u2019t decode. The drone turns, lights sweeping. It stops. A metallic hand reaches for the hatch. She holds her breath, feeling the night close in. Just as the metal clank echoes, a sudden gust throws the hatch open, revealing a dark silhouette that steps into the light\u2014",
+    "[[DAY 2 \u00b7 06:00]] The city breathes in darkness, and Maya lives in the shadows. She\u2019s learned to move like a ghost, avoiding the nightly sweep. [[RULE 3 \u00b7 CREATE FALSE TRAILS]] She strings broken wires across alleys, leading drones on endless loops. The streets echo with the distant hum of generators that never fire. [[DAY 3 \u00b7 02:15]] A rusted metal door in an abandoned subway becomes her hideout. Inside, the walls are covered in scribbles\u2014numbers, dates, and a single name: \"ECHO.\" [[RULE 4 \u00b7 TRUST NO ONE]] A message flashes on a cracked screen: \"We can help. Meet at the old tower at midnight.\" The voice is calm, too calm, and it knows her name, even though she doesn\u2019t remember it. Maya\u2019s fingers tremble, but she can\u2019t ignore the chance. [[MIDNIGHT \u00b7 TOWER BASE]] She climbs the rusted stairs, the wind screaming past broken windows. The clock strikes twelve, and the sky stays black. A low rumble vibrates the concrete. Suddenly, a second drone appears, its lenses focusing on her silhouette. A speaker crackles, \u201cYou\u2019re almost there, Maya. Let us guide you.\u201d She steps forward, heart thudding, as the drone releases a bright flare that blinds the night\u2014just as a hand grabs her shoulder, pulling her into the darkness.",
+    "[[DAY 7 \u00b7 23:58]] The countdown ticks down to the final blackout, and Maya holds the flash drive tight. The government\u2019s voice booms over every speaker: \u201cCitizens, your fears are being harvested for national security.\u201d She slips into the underground lab, walls lined with glass pods pulsing with blue light. Inside one pod, a child sleeps, eyes wide open, a thin tube attached to his temple. The pod\u2019s monitor flashes: \"KEY ACTIVE.\" Maya\u2019s mind floods with flashes\u2014her name, a memory of a lab, a scar on her wrist. She sees the chip inside her own skin, a tiny glint under the skin, the same that erases her name. The door slams shut. A figure emerges, masked, holding a syringe. \u201cYou can end this,\u201d the figure whispers, \u201cbut you must die to destroy the grid.\u201d Maya looks at the sleeping child, then at the glowing console. A choice looms: sacrifice herself, or let the experiment continue. The screen blinks, revealing a hidden file: \"PROJECT ECHO \u2013 MULTIPLE KEYS IDENTIFIED.\" The truth hits\u2014 she is not alone. There are others like her, hidden across the city, each a living key. The drone hovers, its red eye now a mirror of her own fear. She presses the emergency shutoff, the lights flicker, and the city holds its breath. The final question hangs in the darkness: would you give up one life to free a city, or let the unknown experiment continue? What would you do?"
+  ],
+  "scenes": [
+    [
+      "Maya, a small girl in a hoodie, stands on a dark street as lights die.",
+      "Close\u2011up of a digital clock flashing 11:59\u202fPM.",
+      "A hovering drone with red eye scans the empty avenue.",
+      "Maya crouches behind a dumpster, eyes wide.",
+      "Old radio crackles with a distorted voice.",
+      "Maya grips a broken flash drive with a strange symbol.",
+      "Drone\u2019s metal claw reaches for a rooftop hatch.",
+      "Silhouette steps into a shaft of light as the hatch opens."
+    ],
+    [
+      "Maya drags a coil of wires through a narrow alley.",
+      "She paints false footprints on the pavement.",
+      "Abandoned subway entrance covered in graffiti.",
+      "Inside, walls are filled with frantic scribbles.",
+      "Maya reads the name \"ECHO\" on a wall.",
+      "Cracked screen displays a meeting invitation.",
+      "She climbs rusted stairs of the old tower at midnight.",
+      "A second drone releases a bright flare as a hand grabs her."
+    ],
+    [
+      "Underground lab filled with glowing glass pods.",
+      "A sleeping child in a pod with a tube attached.",
+      "Close\u2011up of Maya\u2019s wrist revealing a tiny chip.",
+      "Masked figure holding a syringe approaches Maya.",
+      "Computer monitor shows \"KEY ACTIVE\" and \"PROJECT ECHO\".",
+      "Drone hovers, red eye reflecting Maya\u2019s face.",
+      "Maya\u2019s hand hovers over an emergency shutoff button.",
+      "City skyline in darkness, lights flickering as a decision looms."
+    ]
+  ],
+  "voice": "af_bella",
+  "premise": {
+    "type": "What if scenario (third person)",
+    "hook": "What if the city\u2019s power grid shut down every night at exactly 11:59 PM, and the only one who knows why is a kid who can\u2019t remember his own name?",
+    "twist": "The blackout is a controlled experiment by the government to harvest the citizens\u2019 subconscious fears, and the kid is the living key that can stop it\u2014but he\u2019s been implanted with a memory\u2011wiping chip.",
+    "debate": "Viewers will argue whether the kid should be sacrificed to end the experiment or if the government\u2019s claim of \u2018national security\u2019 justifies the horror, sparking debates on ethics vs survival.",
+    "score": 84
+  },
+  "caption": "The city loses power at 11:59\u202fPM. A kid knows why. #storytime #fyp #foryou #drama #mystery #nightmare"
+}
