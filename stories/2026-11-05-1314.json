@@ -1,0 +1,56 @@
+{
+  "title": "Locked Diary Predicts My Murder",
+  "type": "Mystery",
+  "narrator": "female",
+  "captions": [
+    "I found a locked diary that writes today\u2019s date each morning. #storytime #fyp #foryou #drama #mystery #haunted",
+    "The diary just predicted a murder at my doorstep. #storytime #fyp #foryou #drama #thriller #prediction",
+    "Did I ignore fate or was it a prank? Verdict below! #storytime #fyp #foryou #drama #debate #mystery"
+  ],
+  "parts": [
+    "[[ATTIC \u00b7 07:12 AM]] I found a locked diary in my attic that writes itself with today\u2019s date every morning. [[RULE 1 \u00b7 OPEN]] I pry it open with a rusted screwdriver. The cover creaks. Inside, a single page, ink fresh, reads: \"July twenty\u2011four, nine thirteen PM \u2013 you die at your doorstep.\" My heart jumps. I stare at the page, at the exact time, at the words spelling my name. The attic smells of dust and old wood, a cold draft brushes my neck. I rush downstairs, the old floorboards groaning under my feet. [[DAY 1 \u00b7 07:30 AM]] I call my best friend, Maya, whispering, \u201cIt\u2019s a joke, right?\u201d She laughs, \u201cMaybe you\u2019re just tired.\u201d I hang up, but the diary\u2019s page flips by itself, a new line appearing: \"If you ignore, the killer will wait.\u201d I hear a faint ticking from the hallway clock. Panic spikes. I grab the diary, slam it shut, and bolt the attic door. [[3 MINUTES LEFT]] My phone buzzes \u2013 a text from an unknown number: \u201cSee you at nine\u2011thirteen.\u201d I stare at the screen, breath shallow, eyes darting to the darkening sky. The sun slips behind clouds, shadows stretch. I hear a car idling outside, its engine humming like a warning. I glance at the clock \u2013 it reads eight fifty\u2011nine. I have eleven minutes. I swallow hard and step toward the front door, the diary heavy in my bag. [[CUT OFF BEFORE REVELATION]]",
+    "[[DAY 1 \u00b7 08:58 AM]] I\u2019m still at the front door, the diary thudding against my chest. The car outside sputters, engine cooling. My hands shake, the knob cold under my fingers. I hear a soft knock, two rapid taps. I glance at the diary \u2013 the page is blank now, the ink faded. A new line forms: \"He\u2019ll knock twice, then step inside.\" My breath catches. I decide to open just a crack. The hallway light flickers, casting long shadows. [[RULE 2 \u00b7 WAIT]] I count the knocks: one, two. I step back, heart pounding. A figure appears in the doorway, silhouette tall, coat soaked from rain. I can\u2019t make out a face. \"Who\u2019s there?\" I whisper, voice cracking. No answer, only the sound of rain hitting the porch. The diary flips again, ink spilling: \"Don\u2019t speak, he hears you.\u201d I freeze, my throat dry. The stranger moves, hand reaching for the knob. I hear the clock tick: nine\u2011ten. My mind races. I think of Maya\u2019s laugh, of the prank idea. Maybe it\u2019s a friend trying to scare me. I glance at the diary, hoping for a clue. The page stays empty. The figure\u2019s footsteps echo, each one louder. I hear a faint metallic click from inside the house \u2013 the front door lock disengaging. I realize I\u2019m the only thing between him and the living room. [[9:11 PM \u00b7 LIVING ROOM]] I grab the diary, fling it onto the couch, and slam the door shut, just as the knob turns. [[CUT OFF BEFORE REVELATION]]",
+    "[[DAY 1 \u00b7 09:13 PM]] The door bursts open, splintering wood, and a shadow lunges forward. I dodge, the diary slipping from my hands, pages fluttering like frantic birds. The intruder is a man in a dark hoodie, face hidden, eyes glinting. He lunges again, this time his hand gripping my wrist. I twist, hear the faint click of a hidden blade in his coat. I scramble backward, feeling the cold floorboards under my shoes. My breath is ragged, the attic diary now lying open on the couch, its last entry glowing: \"He is you.\" I stare, horror dawning. The man steps back, pulls a small device from his pocket, and points it at me. \"You wrote it,\" he snarls, voice distorted. \"You invited me.\u201d The clock on the wall ticks twelve seconds left. I realize the diary was never predicting \u2013 it was a trap I set for myself, a twisted game of self\u2011fulfilling prophecy. I grab a nearby lamp, swing it hard. The device sparks, a flash of light. The man staggers, drops the weapon, and collapses. I gasp, the diary\u2019s pages fluttering, now blank. The front door slams shut on its own, wind howling through the cracks. I stand trembling, the house silent except for the ticking clock. I pick up the diary, its cover now cracked, the lock broken. Did I just survive because I believed the warning, or did I cause the murder to happen? So... was I wrong to trust a haunted diary, or was it all a cruel prank? #storytime #fyp #foryou #drama #verdict #mystery"
+  ],
+  "scenes": [
+    [
+      "Attic with dusty beams and old trunk",
+      "Close\u2011up of locked diary on a wooden plank",
+      "Hand holding rusted screwdriver prying the diary",
+      "Page showing today\u2019s date and prediction",
+      "Narrator looking shocked, eyes wide",
+      "Downstairs hallway with creaking floorboards",
+      "Phone screen showing unknown text message",
+      "Clock on wall showing eight fifty\u2011nine"
+    ],
+    [
+      "Front door with rain\u2011slick porch",
+      "Diary clenched in narrator\u2019s hand",
+      "Silhouette of a hooded figure in doorway",
+      "Close\u2011up of knocking hand on door",
+      "Rain dripping off the coat of the figure",
+      "Narrator peeking through cracked door",
+      "Clock ticking nine\u2011ten, close\u2011up",
+      "Door knob turning, wood splintering"
+    ],
+    [
+      "Door flying open, wood shards flying",
+      "Hooded intruder lunging toward narrator",
+      "Diary falling onto couch, pages fluttering",
+      "Narrator gripping lamp, ready to swing",
+      "Close\u2011up of device sparking in intruder\u2019s hand",
+      "Intruder dropping weapon, collapsing",
+      "Clock showing twelve seconds left",
+      "Narrator holding cracked diary, looking relieved"
+    ]
+  ],
+  "voice": "bf_emma",
+  "premise": {
+    "type": "Mystery",
+    "hook": "I found a locked diary in my attic that writes itself with today's date every morning.",
+    "twist": "The diary predicts a murder that will happen at my doorstep at 9:13\u202fPM, and the victim is me.",
+    "debate": "Viewers will argue if the narrator should trust a haunted diary and change fate, or if it\u2019s a prank that could cause panic.",
+    "score": 88
+  },
+  "caption": "I found a locked diary that writes today\u2019s date each morning. #storytime #fyp #foryou #drama #mystery #haunted"
+}
