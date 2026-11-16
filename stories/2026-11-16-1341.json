@@ -1,0 +1,56 @@
+{
+  "title": "Did My Mother-in-Law Hack My Wedding?",
+  "type": "Wedding, inheritance and money betrayal",
+  "narrator": "female",
+  "captions": [
+    "My fianc\u00e9's mother slipped a USB into my wedding cake. #storytime #fyp #foryou #drama #wedding #betrayal",
+    "The venue goes dark and strangers demand answers. #storytime #fyp #foryou #drama #hostage #ransomware",
+    "Should I call the police or negotiate? Verdict below! #storytime #fyp #foryou #drama #comment #vote"
+  ],
+  "parts": [
+    "[[9:00 PM \u00b7 REHEARSAL]] I watch my fianc\u00e9\u2019s mother slide a tiny USB into the frosting of my three\u2011tier cake, whispering, \u201cFamily recipe, dear.\u201d My stomach drops. I smile, thank her, and turn back to the choir. [[RULE 1 \u00b7 TRUST]] The lights are soft, the perfume of fresh roses fills the air, and the guests are filing in. I feel the buzz of excitement, but a cold knot tightens at my throat. [[3 MINUTES LEFT]] The DJ cues the first song, and I step onto the dance floor with my future husband. The band plays our song, and I hear a faint click behind the cake stand. My heart hammers. I glance at the cake, see the glossy swirl where the USB sits, and wonder if I should pull it out. I shake my head. It\u2019s my day. I whisper, \u201cEverything\u2019s perfect.\u201d The crowd claps, the cameras flash. Suddenly the lights flicker, then plunge into darkness. A low hum rises from the speakers. A digital voice crackles, \u201cSecurity system compromised. All exits locked. Live feed activated.\u201d Panic erupts. I hear a scream, the sound of metal grinding. My fianc\u00e9\u2019s mother\u2019s eyes widen, but she says nothing. I stare at the cake, the USB glinting like a promise of disaster. The clock on the wall reads ten minutes to midnight. I realize we\u2019re not just missing a slice \u2013 we\u2019re missing control.",
+    "[[10 MINUTES LEFT \u00b7 CHAOS]] The venue is a cage, the lights a strobe of red emergency LEDs. Guests shout, clutching phones, trying to record the nightmare. My fianc\u00e9 grabs my hand, his grip tight, his voice shaking, \u201cWhat do we do?\u201d I stare at the cake, at the USB still embedded in sugar. The digital voice repeats, \u201cNegotiations required. Ransom demanded within fifteen minutes.\u201d My mind races. The caterer whispers, \u201cThey\u2019re holding the building\u2019s security system hostage. The cameras are live on the internet now.\u201d I hear sirens outside, but the doors are sealed. [[RULE 2 \u00b7 NEGOTIATE]] I consider calling the police, but the voice warned: \u201cPolice involvement will trigger data wipe. No safe return.\u201d I glance at my mother\u2011in\u2011law, her face pale, her hands clasped around a crystal glass. She mouths, \u201cI didn\u2019t know\u2026\u201d The clock ticks, each second louder than the last. I spot the wedding planner frantically typing on a laptop, trying to bypass the ransomware. The screen flashes a ransom note: \u201cPay ten thousand dollars in Bitcoin to release the venue.\u201d The DJ\u2019s music stops, replaced by a buzzing static. I feel the weight of my family\u2019s inheritance, a trust fund that my fianc\u00e9\u2019s mother was supposed to help manage. Now it\u2019s a bargaining chip. I swallow, trying to think. The bride\u2019s dress rustles as she steps forward, tears streaming. I whisper, \u201cWe have to buy time.\u201d The voice booms again, \u201cOne minute remaining.\u201d",
+    "[[0 MINUTES \u00b7 SHOWDOWN]]\n\nThe clock ticks down. If we don\u2019t stop it now, the whole wedding is lost.\n\n\"Time\u2019s up. Live feed now,\" the hacked voice snarls. The main screen erupts, flashing our terrified faces to a worldwide audience. My fianc\u00e9\u2019s mother clutches the USB, knuckles white, tears streaming down her cheeks.\n\nI stare into the camera. My heart hammers. Sweat drenches my dress. The police burst through the doors, but the ransomware slams the gate shut behind them. A frantic shout cracks the air: \"I\u2019ve found a backdoor!\"\n\nThe tech crew\u2019s fingers fly, trembling, typing furiously. The screen flickers, then a chilling message scrolls: \"Payment received. System unlocking.\"\n\nA deafening click. The doors swing wide. Guests flood out, phones still recording, eyes wide with horror. Officers swarm the room, cuffing my mother\u2011in\u2011law. She meets my gaze, pleading, \"I was trying to protect the inheritance.\"\n\nI realize the USB holds proof of her embezzling the family trust \u2013 the true motive behind the ransomware. Rage spikes, cold and sharp.\n\nI turn to the camera, voice steady: \"Should I have called the police earlier, or tried to negotiate with a criminal? Who\u2019s truly at fault \u2013 the mother\u2011in\u2011law who set the trap, or me for staying silent?\"\n\nI pause, breath shallow. The screen fades to black.\n\nSo\u2026 was I wrong?"
+  ],
+  "scenes": [
+    [
+      "Bride in white holding a delicate cake tier.",
+      "Mother\u2011in\u2011law, silver hair, slipping a tiny USB into frosting.",
+      "Close\u2011up of the USB glinting against white icing.",
+      "DJ booth with lights dimming.",
+      "Guests entering, smiling, holding glasses.",
+      "Fianc\u00e9 in a tuxedo adjusting his bow tie.",
+      "Candlelight flickering on the tables.",
+      "Clock on the wall showing ten minutes to midnight."
+    ],
+    [
+      "Venue lights flashing red emergency LEDs.",
+      "Crowd panicking, phones raised to record.",
+      "Mother\u2011in\u2011law clutching a crystal glass, pale face.",
+      "Wedding planner typing furiously on a laptop.",
+      "Digital ransom note on a large screen.",
+      "Police lights visible through sealed doors.",
+      "Bride\u2019s veil blowing as she cries.",
+      "Fianc\u00e9 gripping bride\u2019s hand tightly."
+    ],
+    [
+      "Large screen broadcasting the live feed to the world.",
+      "Police officers storming through opened doors.",
+      "Mother\u2011in\u2011law being handcuffed, tears streaming.",
+      "Tech crew member typing on a laptop, focused.",
+      "Guests rushing out, some still filming.",
+      "Close\u2011up of a Bitcoin wallet address on the screen.",
+      "Bride standing alone, dress slightly torn.",
+      "Narrator looking directly into the camera, intense expression."
+    ]
+  ],
+  "voice": "bf_emma",
+  "premise": {
+    "type": "Wedding, inheritance and money betrayal",
+    "hook": "My fianc\u00e9's mother slipped a USB into my wedding cake, saying it was a family recipe.",
+    "twist": "The USB contained a ransomware that locked down the venue's security system, forcing the wedding to be broadcast live as a hostage situation.",
+    "debate": "Commenters will dispute if the narrator should have called the police or tried to negotiate, and who\u2019s truly at fault.",
+    "score": 82
+  },
+  "caption": "My fianc\u00e9's mother slipped a USB into my wedding cake. #storytime #fyp #foryou #drama #wedding #betrayal"
+}
