@@ -1,0 +1,56 @@
+{
+  "title": "Why was the plane counting down?",
+  "type": "Something is wrong",
+  "narrator": "female",
+  "captions": [
+    "I booked a last\u2011minute flight and the seatback screen kept showing a countdown: 02:15:00. #storytime #fyp #foryou #drama #aviation #mystery",
+    "The timer ticks, the cabin lights flicker, and the pilot\u2019s voice cracks. What\u2019s really happening up here? #storytime #fyp #foryou #drama #airline #suspense",
+    "When the clock hits zero the plane does something impossible. Was it a glitch, a plot, or an experiment? Your verdict. #storytime #fyp #foryou #drama #conspiracy #aircraft"
+  ],
+  "parts": [
+    "[[BOARDING \u00b7 02:15:00]] I booked a last\u2011minute flight and the seatback screen kept showing a countdown: zero two one five zero zero. The cabin hums, strangers stare, and I feel the weight of the timer like a pulse. [[WINDOW SEAT \u00b7 NIGHT]] I glance outside; the clouds are a black ocean, stars blinking behind the wing. The flight attendant smiles, \u201cEnjoy the flight,\u201d but her eyes flick to the screen. [[COUNTDOWN TICKING]] Seconds drip: one hundred twenty\u2011nine, one twenty\u2011eight\u2026 My heart spikes. I tap the screen. Nothing. It\u2019s just numbers, but it feels like a bomb. [[PAUSE \u00b7 DRINK CART]] The captain\u2019s voice crackles, \u201cLadies and gentlemen, we\u2019re experiencing a minor technical delay.\u201d I hear a faint whirr, like a motor starting up deeper in the fuselage. [[SENSES SHARPENED]] My throat is dry. My palms sweat on the armrest. A child laughs nearby, then stops. The screen blinks, \u201c02:14:55.\u201d I stare at the couple beside me, their faces blank, as if they know something I don\u2019t. [[FALSE RELIEF]] The plane steadies, the lights dim, and a soft lullaby plays. I exhale, thinking it\u2019s just a glitch. Then the seatback vibrates, a low hum growing louder. The timer drops to one hundred twenty\u2011four. I whisper, \u201cWhat the hell is this?\u201d",
+    "[[DAY 2 \u00b7 01:45:00]] The timer keeps counting down, each tick louder than the last. I\u2019m gripping the armrest, eyes glued to the glowing numbers. [[CABIN LIGHTS FLICKER]] The lights flicker, then snap back, casting eerie shadows across tired faces. The flight attendant returns, her smile forced, \u201cWe\u2019re still on schedule,\u201d she says, but the screen shows zero one four five zero zero. [[MYSTERIOUS HUM]] A deep hum vibrates through the fuselage, like a hidden engine waking. I glance at the pilot\u2019s window; the curtains are drawn, the silhouette of a man moving slowly. [[SOUND OF METAL]] Metal groans as if the plane is shifting. The captain\u2019s voice returns, steadier, \u201cWe\u2019re encountering unexpected turbulence.\u201d I hear a muffled clang from the cargo hold. My phone buzzes with a text: \u201cStay seated.\u201d No number. I text back, \u201cWhat\u2019s happening?\u201d No reply. [[COUNTDOWN 30 MIN]] The screen now reads zero one five zero zero. Thirty minutes left. My stomach drops. The cabin pressure steadies, the humming fades, and a calm voice over the intercom announces, \u201cWe\u2019ll be landing shortly.\u201d Relief washes over me, but the screen still glows. I feel a cold draft along the aisle, as if a door opened somewhere hidden. The seatback flashes: zero one four five nine nine. I hear the faint thump of a boot stepping on the floor above my seat. I turn my head\u2014nothing but rows of sleeping passengers. The timer ticks, relentless.",
+    "[[FINAL MINUTES \u00b7 ZERO]] The timer hits zero, and the cabin lights snap off. Total darkness, then a red strobe floods the aisle. A mechanical voice shatters the silence, \u201cProtocol Alpha engaged.\u201d The plane shudders, a sudden pitch change, as if the wings are being forced down. [[HATCH OPENS]] A hidden hatch in the floor slides open, revealing a narrow stairwell lit by harsh fluorescent tubes. The intercom crackles, \u201cWelcome to Facility Echo.\u201d My breath fogs in the cold air. I scramble to my seat, heart hammering, and hear footsteps\u2014heavy, deliberate\u2014outside the cabin. The flight crew stands, their uniforms now black, masks covering their faces. The captain, now unrecognizable, points a tablet at the screen. The numbers flash: ZERO. The plane\u2019s autopilot whirs, rerouting the flight path. Outside the window, the clouds part to reveal a massive, deserted runway surrounded by barbed wire and armed silhouettes. I stare at the soldiers lining the tarmac, their rifles glinting. A voice whispers in my ear, \u201cYou\u2019re part of the test.\u201d I glance at the seatback screen; it now shows a single line: \u201cEXPERIMENT COMPLETE.\u201d The doors slam shut, sealing us in. My mind races\u2014glitch? Terrorist hijack? Government experiment? I grip the armrest, waiting for answers that may never come. So\u2026 was this a glitch, a plot, or a secret experiment? Your verdict."
+  ],
+  "scenes": [
+    [
+      "Woman in a navy jacket boarding the plane, looking at seatback screen",
+      "Close\u2011up of countdown numbers glowing red",
+      "Window view of dark clouds and stars",
+      "Flight attendant smiling, glancing at screen",
+      "Captain\u2019s hand on yoke, faint silhouette visible",
+      "Child in a seat laughing, then falling silent",
+      "Seatback screen vibrating, numbers ticking down",
+      "Woman gripping armrest, eyes wide"
+    ],
+    [
+      "Cabin lights flickering, shadows across rows",
+      "Seatback screen showing 01:45:00",
+      "Flight attendant returning with forced smile",
+      "Pilot\u2019s window curtains drawn, silhouette moving",
+      "Metal groaning from the fuselage",
+      "Phone screen with mysterious text \u201cStay seated\u201d",
+      "Red strobe light flashing in aisle",
+      "Hidden hatch sliding open, stairwell illuminated"
+    ],
+    [
+      "Red strobe flooding the aisle, darkness outside",
+      "Mechanical voice display \u201cProtocol Alpha engaged\u201d",
+      "Black\u2011uniformed crew with masks pointing tablets",
+      "Stairwell leading down to a dimly lit corridor",
+      "Window revealing a deserted runway with barbed wire",
+      "Armed soldiers standing on tarmac",
+      "Seatback screen flashing \u201cEXPERIMENT COMPLETE\u201d",
+      "Woman clutching armrest, looking terrified"
+    ]
+  ],
+  "voice": "bf_emma",
+  "premise": {
+    "type": "Something is wrong",
+    "hook": "I booked a last\u2011minute flight and the seatback screen kept showing a countdown: 02:15:00.",
+    "twist": "When the timer hit zero, the plane\u2019s autopilot engaged a hidden protocol that diverts the aircraft to a remote military base.",
+    "debate": "Was this a glitch, a terrorist plot, or a government experiment gone wrong?",
+    "score": 85
+  },
+  "caption": "I booked a last\u2011minute flight and the seatback screen kept showing a countdown: 02:15:00. #storytime #fyp #foryou #drama #aviation #mystery"
+}
